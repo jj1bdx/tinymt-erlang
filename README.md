@@ -1,0 +1,54 @@
+# sfmt-erlang: SIMD-oriented Fast Mersenne Twister (SFMT) for Erlang
+
+* Release date: 26-APR-2012
+* Edited and written by Kenji Rikitake (Kyoto University)
+* Email contact: <kenji.rikitake@acm.org>
+
+Copyright (c) 2012 Kenji Rikitake and Kyoto University. All rights
+reserved.
+
+Copyright (c) 2011-2012 Mutsuo Saito, Makoto Matsumoto, Hiroshima
+University, and the University of Tokyo. All rights reserved.
+
+See LICENSE.txt for the license (new/simplified BSD license). (Note:
+license of rebar is Apache 2.0 License.)
+
+This software is based on
+Tiny Mersenne Twister (TinyMT)
+Version 1.0.1
+by Mutsuo Saito (Hiroshima University) and Makoto
+Matsumoto (The University of Tokyo).
+
+## Details of SFMT algorithm
+
+See <http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/TINYMT/index.html>
+
+## Tested platforms
+
+* FreeBSD/amd64 9.0-STABLE with Erlang/OTP R15B01
+
+## Building 
+
+* Use BSD/GNU make and then
+
+    make
+
+The build script is Basho's rebar at <https://github.com/basho/rebar>,
+which will be automatically fetched under the directory `support/`.
+
+## TODO
+
+* More documentation and code
+* More evaluation and refactoring
+
+## Code authors:
+
+* Kenji Rikitake
+* Mutsuo Saito
+* Makoto Matsumoto
+
+## THANKS to:
+
+* Dave "dizzyd" Smith
+* Tuncer Ayaz
+
