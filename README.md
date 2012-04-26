@@ -1,4 +1,4 @@
-# sfmt-erlang: SIMD-oriented Fast Mersenne Twister (SFMT) for Erlang
+# tinymt-erlang: Tiny Mersenne Twister (TinyMT) for Erlang
 
 * Release date: 26-APR-2012
 * Edited and written by Kenji Rikitake (Kyoto University)
