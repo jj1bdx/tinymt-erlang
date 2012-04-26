@@ -26,6 +26,8 @@ See <http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/TINYMT/index.html>
 ## Tested platforms
 
 * FreeBSD/amd64 9.0-STABLE with Erlang/OTP R15B01
+* FreeBSD/i386 8.3-RELEASE with Erlang/OTP R15B01
+* Windows 7 64bit with Erlang/OTP R15B01 (no rebar support)
 
 ## Building 
 
@@ -35,6 +37,11 @@ See <http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/TINYMT/index.html>
 
 The build script is Basho's rebar at <https://github.com/basho/rebar>,
 which will be automatically fetched under the directory `support/`.
+
+## Preliminary benchmark results
+
+* On i386: tinymt takes x2 CPU time than random (slower than random) 
+* On amd64: tinymt takes x0.7 CPU time than random (faster than random)
 
 ## TODO
 
