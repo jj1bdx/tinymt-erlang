@@ -19,7 +19,7 @@ Version 1.0.1
 by Mutsuo Saito (Hiroshima University) and Makoto
 Matsumoto (The University of Tokyo).
 
-## Details of SFMT algorithm
+## Details of TinyMT algorithm
 
 See <http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/TINYMT/index.html>
 
