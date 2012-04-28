@@ -140,6 +140,9 @@ init(R, S) ->
 					   status2 = V2, status3 = V3}),
     init_rec2(0, ?PRE_LOOP, R1).
 
+-spec init_by_list32_rec1(integer(), integer(), list[integer()], array()) ->
+				 {integer(), array()}.
+
 init_by_list32_rec1(0, I, _, ST) ->
     {I, ST};
 init_by_list32_rec1(K, I, [], ST) ->
@@ -171,6 +174,8 @@ init_by_list32_rec1(K, I, Key, ST) ->
     ST4 = array:set(I, RR2, ST3),
     I2 = (I + 1) rem ?SIZE,
     init_by_list32_rec1(K - 1, I2, T, ST4).
+
+-spec init_by_list32_rec1(integer(), integer(), array()) -> array().
 
 init_by_list32_rec2(0, _, ST) ->
     ST;
@@ -207,7 +212,6 @@ init_by_list32(R, K) ->
             true ->
                 ?MIN_LOOP
         end,
-
     RR1 = ini_func1(array:get(0, ST3) bxor
                   array:get(?MID rem ?SIZE, ST3) bxor
                   array:get((?SIZE - 1) rem ?SIZE, ST3)),
@@ -220,7 +224,6 @@ init_by_list32(R, K) ->
                     ST4),
     ST6 = array:set(0, RR2, ST5),
     C1 = C - 1,
-
     {I1, ST7} = init_by_list32_rec1(C1, 1, K, ST6),
     ST8 = init_by_list32_rec2(?SIZE, I1, ST7),
     [V0, V1, V2, V3] = array:to_list(ST8),
