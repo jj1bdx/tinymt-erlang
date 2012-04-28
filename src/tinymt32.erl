@@ -38,6 +38,7 @@
 -export([next_state/1,
 	 temper/1,
 	 init/2,
+	 init_by_list32/2,
 	 testloop/1]).
 
 -include("tinymt32.hrl").
@@ -135,6 +136,94 @@ init(R, S) ->
     ST3 = array:set(3, R#intstate32.tmat, ST2),
     ST4 = init_rec1(1, ?MIN_LOOP, ST3),
     [V0, V1, V2, V3] = array:to_list(ST4),
+    R1 = period_certification(R#intstate32{status0 = V0, status1 = V1,
+					   status2 = V2, status3 = V3}),
+    init_rec2(0, ?PRE_LOOP, R1).
+
+init_by_list32_rec1(0, I, _, ST) ->
+    {I, ST};
+init_by_list32_rec1(K, I, [], ST) ->
+    RR = ini_func1(array:get(I, ST) bxor
+                  array:get((I + ?MID) rem ?SIZE, ST) bxor
+                  array:get((I + ?SIZE - 1) rem ?SIZE, ST)),
+    ST2 = array:set((I + ?MID) rem ?SIZE,
+                   (array:get((I + ?MID) rem ?SIZE, ST) + RR) band ?MASK32,
+                    ST),
+    RR2 = (RR + I) band ?MASK32,
+    ST3 = array:set((I + ?MID + ?LAG) rem ?SIZE,
+                 (array:get((I + ?MID + ?LAG) rem ?SIZE, ST2) + RR2) band ?MASK32,
+                 ST2),
+    ST4 = array:set(I, RR2, ST3),
+    I2 = (I + 1) rem ?SIZE,
+    init_by_list32_rec1(K - 1, I2, [], ST4);
+init_by_list32_rec1(K, I, Key, ST) ->
+    RR = ini_func1(array:get(I, ST) bxor
+                  array:get((I + ?MID) rem ?SIZE, ST) bxor
+                  array:get((I + ?SIZE - 1) rem ?SIZE, ST)),
+    ST2 = array:set((I + ?MID) rem ?SIZE,
+                   (array:get((I + ?MID) rem ?SIZE, ST) + RR) band ?MASK32,
+                    ST),
+    [H|T] = Key,
+    RR2 = (RR + H + I) band ?MASK32,
+    ST3 = array:set((I + ?MID + ?LAG) rem ?SIZE,
+                 (array:get((I + ?MID + ?LAG) rem ?SIZE, ST2) + RR2) band ?MASK32,
+                 ST2),
+    ST4 = array:set(I, RR2, ST3),
+    I2 = (I + 1) rem ?SIZE,
+    init_by_list32_rec1(K - 1, I2, T, ST4).
+
+init_by_list32_rec2(0, _, ST) ->
+    ST;
+init_by_list32_rec2(K, I, ST) ->
+    RR = ini_func2((array:get(I, ST) +
+                  array:get((I + ?MID) rem ?SIZE, ST) +
+                  array:get((I + ?SIZE - 1) rem ?SIZE, ST)) band ?MASK32),
+    ST2 = array:set((I + ?MID) rem ?SIZE,
+                   (array:get((I + ?MID) rem ?SIZE, ST) bxor RR),
+                   ST),
+    RR2 = (RR - I) band ?MASK32,
+    ST3 = array:set((I + ?MID + ?LAG) rem ?SIZE,
+                   (array:get((I + ?MID + ?LAG) rem ?SIZE, ST2) bxor RR2),
+                   ST2),
+    ST4 = array:set(I, RR2, ST3),
+    I2 = (I + 1) rem ?SIZE,
+    init_by_list32_rec2(K - 1, I2, ST4).
+
+%% @doc generates an internal state from a list of 32-bit integers
+
+-spec init_by_list32(#intstate32{}, [uint32()]) -> #intstate32{}.
+
+init_by_list32(R, K) ->
+    KL = length(K),
+    ST = array:new(4),
+    ST0 = array:set(0, 0, ST),
+    ST1 = array:set(1, R#intstate32.mat1, ST0),
+    ST2 = array:set(2, R#intstate32.mat2, ST1),
+    ST3 = array:set(3, R#intstate32.tmat, ST2),
+    C =
+        if
+            KL + 1 > ?MIN_LOOP ->
+                KL + 1;
+            true ->
+                ?MIN_LOOP
+        end,
+
+    RR1 = ini_func1(array:get(0, ST3) bxor
+                  array:get(?MID rem ?SIZE, ST3) bxor
+                  array:get((?SIZE - 1) rem ?SIZE, ST3)),
+    ST4 = array:set(?MID rem ?SIZE,
+		    (array:get(?MID rem ?SIZE, ST3) + RR1) band ?MASK32,
+                    ST3),
+    RR2 = (RR1 + KL) band ?MASK32,
+    ST5 = array:set((?MID + ?LAG) rem ?SIZE,
+                   (array:get((?MID + ?LAG) rem ?SIZE, ST4) + RR2) band ?MASK32,
+                    ST4),
+    ST6 = array:set(0, RR2, ST5),
+    C1 = C - 1,
+
+    {I1, ST7} = init_by_list32_rec1(C1, 1, K, ST6),
+    ST8 = init_by_list32_rec2(?SIZE, I1, ST7),
+    [V0, V1, V2, V3] = array:to_list(ST8),
     R1 = period_certification(R#intstate32{status0 = V0, status1 = V1,
 					   status2 = V2, status3 = V3}),
     init_rec2(0, ?PRE_LOOP, R1).
