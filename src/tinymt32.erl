@@ -140,7 +140,7 @@ init(R, S) ->
 					   status2 = V2, status3 = V3}),
     init_rec2(0, ?PRE_LOOP, R1).
 
--spec init_by_list32_rec1(integer(), integer(), list[integer()], array()) ->
+-spec init_by_list32_rec1(integer(), integer(), [uint32()], array()) ->
 				 {integer(), array()}.
 
 init_by_list32_rec1(0, I, _, ST) ->
@@ -175,7 +175,7 @@ init_by_list32_rec1(K, I, Key, ST) ->
     I2 = (I + 1) rem ?SIZE,
     init_by_list32_rec1(K - 1, I2, T, ST4).
 
--spec init_by_list32_rec1(integer(), integer(), array()) -> array().
+-spec init_by_list32_rec2(integer(), integer(), array()) -> array().
 
 init_by_list32_rec2(0, _, ST) ->
     ST;
