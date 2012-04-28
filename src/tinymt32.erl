@@ -46,10 +46,9 @@
 next_state(R) ->
     Y0 = R#intstate32.status3,
     X0 = (R#intstate32.status0 band ?TINYMT32_MASK)
-	bxor R#intstate32.status1 bxor R#intstate32.status2
-	band ?MASK32,
+	bxor R#intstate32.status1 bxor R#intstate32.status2,
     X1 = (X0 bxor (X0 bsl ?TINYMT32_SH0)) band ?MASK32,
-    Y1 = (Y0 bxor (Y0 bsr ?TINYMT32_SH0) bxor X1) band ?MASK32,
+    Y1 = Y0 bxor (Y0 bsr ?TINYMT32_SH0) bxor X1,
     S0 = R#intstate32.status1,
     S10 = R#intstate32.status2,
     S20 = (X1 bxor (Y1 bsl ?TINYMT32_SH1)) band ?MASK32,
