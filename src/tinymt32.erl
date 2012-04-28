@@ -46,20 +46,21 @@
 next_state(R) ->
     Y0 = R#intstate32.status3,
     X0 = (R#intstate32.status0 band ?TINYMT32_MASK)
-	bxor R#intstate32.status1 bxor R#intstate32.status2
-	band ?MASK32,
+	bxor R#intstate32.status1 bxor R#intstate32.status2,
     X1 = (X0 bxor (X0 bsl ?TINYMT32_SH0)) band ?MASK32,
-    Y1 = (Y0 bxor (Y0 bsr ?TINYMT32_SH0) bxor X1) band ?MASK32,
+    Y1 = Y0 bxor (Y0 bsr ?TINYMT32_SH0) bxor X1,
     S0 = R#intstate32.status1,
     S10 = R#intstate32.status2,
     S20 = (X1 bxor (Y1 bsl ?TINYMT32_SH1)) band ?MASK32,
     S3 = Y1,
-    YF = case (Y1 band 1) of
-	     0 -> 0;
-	     1 -> ?MASK32
+    S1 = case (Y1 band 1) of
+	     0 -> S10;
+	     1 -> S10 bxor R#intstate32.mat1
 	 end,
-    S1 = S10 bxor (R#intstate32.mat1 band YF),
-    S2 = S20 bxor (R#intstate32.mat2 band YF),
+    S2 = case (Y1 band 1) of
+	     0 -> S20;
+	     1 -> S20 bxor R#intstate32.mat2
+	 end,
     R#intstate32{status0 = S0, status1 = S1, status2 = S2, status3 = S3}.
 
 -spec temper(#intstate32{}) -> uint32().
