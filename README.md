@@ -1,6 +1,6 @@
 # tinymt-erlang: Tiny Mersenne Twister (TinyMT) for Erlang
 
-* Release date: 26-APR-2012
+* Release date: 28-APR-2012
 * Edited and written by Kenji Rikitake (Kyoto University)
 * Email contact: <kenji.rikitake@acm.org>
 
@@ -37,6 +37,12 @@ See <http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/TINYMT/index.html>
 
 The build script is Basho's rebar at <https://github.com/basho/rebar>,
 which will be automatically fetched under the directory `support/`.
+
+## Unit testing
+
+* Use BSD/GNU make and then
+
+    make eunit
 
 ## Preliminary benchmark results
 
