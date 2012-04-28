@@ -21,7 +21,8 @@ Matsumoto (The University of Tokyo).
 
 ## Details of TinyMT algorithm
 
-See <http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/TINYMT/index.html>
+* See <http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/TINYMT/index.html>
+* Also see <https://github.com/jj1bdx/TinyMT/> for my fork of the reference code
 
 ## Tested platforms
 
@@ -51,6 +52,7 @@ which will be automatically fetched under the directory `support/`.
 
 ## TODO
 
+* Code checking on `tinymt32:init/2` and `tinymt32:init_by_list32/2`
 * More documentation and code
 * More evaluation and refactoring
 
