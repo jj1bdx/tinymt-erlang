@@ -37,9 +37,16 @@
 
 -export([next_state/1,
 	 temper/1,
+	 init/2,
 	 testloop/1]).
 
 -include("tinymt32.hrl").
+
+-define(MIN_LOOP, 8).
+-define(PRE_LOOP, 8).
+-define(LAG, 1).
+-define(MID, 1).
+-define(SIZE, 4).
 
 -spec next_state(#intstate32{}) -> #intstate32{}.
 
@@ -75,9 +82,65 @@ temper(R) ->
 	1 -> T2 bxor R#intstate32.tmat
     end.
 
+-spec period_certification(#intstate32{}) -> #intstate32{}.
+
+%% if the lower 127bits of the seed is all zero, reinitialize
+period_certification(#intstate32{status0 = 0, status1 = 0, status2 = 0, status3 = 0,
+				mat1 = M1, mat2 = M2, tmat = TM}) ->
+    #intstate32{status0 = $T, status1 = $I, status2 = $N, status3 = $Y,
+	        mat1 = M1, mat2 = M2, tmat = TM};
+period_certification(#intstate32{status0 = 16#80000000, status1 = 0, status2 = 0, status3 = 0,
+				mat1 = M1, mat2 = M2, tmat = TM}) ->
+    #intstate32{status0 = $T, status1 = $I, status2 = $N, status3 = $Y,
+	        mat1 = M1, mat2 = M2, tmat = TM};
+period_certification(_R) -> _R.
+
+-spec ini_func1(uint32()) -> uint32().
+
+ini_func1(X) ->
+    ((X bxor (X bsr 27)) * 1664525) band ?MASK32.
+
+-spec ini_func2(uint32()) -> uint32().
+
+ini_func2(X) ->
+    ((X bxor (X bsr 27)) * 1566083941) band ?MASK32.
+
+-spec init_rec1(integer(), integer(), array()) -> array().
+
+init_rec1(I, N, ST) when I =:= N ->
+    ST;
+init_rec1(I, N, ST) when I < N ->
+    V1 = array:get((I - 1) rem 3, ST),
+    ST1 = array:set(I rem 3,
+		    (array:get(I rem 3, ST) bxor
+			 (I + (1812433253 * (V1 bxor (V1 bsr 30))))
+			 band ?MASK32), ST),
+    init_rec1(I + 1, N, ST1).
+
+-spec init_rec2(integer(), integer(), #intstate32{}) -> #intstate32{}.
+
+init_rec2(I, N, R) when I =:= N ->
+    R;
+init_rec2(I, N, R) when I < N ->
+    R1 = next_state(R),
+    init_rec2(I + 1, N, R1).
+
+-spec init(#intstate32{}, uint32()) -> #intstate32{}.
+
+init(R, S) ->
+    ST = array:new(4),
+    ST0 = array:set(0, S, ST),
+    ST1 = array:set(1, R#intstate32.mat1, ST0),
+    ST2 = array:set(2, R#intstate32.mat2, ST1),
+    ST3 = array:set(3, R#intstate32.tmat, ST2),
+    ST4 = init_rec1(1, ?MIN_LOOP, ST3),
+    [V0, V1, V2, V3] = array:to_list(ST4),
+    R1 = period_certification(R#intstate32{status0 = V0, status1 = V1,
+					   status2 = V2, status3 = V3}),
+    init_rec2(0, ?PRE_LOOP, R1).
+
 -spec testloop(pos_integer()) -> list().
 		       
-
 testloop(N) ->
     R = #intstate32{status0 = 297425621, status1 = 2108342699,
             status2 = 2289213227463, status3 = 2232209075,
