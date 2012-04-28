@@ -111,9 +111,9 @@ ini_func2(X) ->
 init_rec1(I, N, ST) when I =:= N ->
     ST;
 init_rec1(I, N, ST) when I < N ->
-    V1 = array:get((I - 1) rem 3, ST),
-    ST1 = array:set(I rem 3,
-		    (array:get(I rem 3, ST) bxor
+    V1 = array:get((I - 1) band 3, ST),
+    ST1 = array:set(I band 3,
+		    (array:get(I band 3, ST) bxor
 			 (I + (1812433253 * (V1 bxor (V1 bsr 30))))
 			 band ?MASK32), ST),
     init_rec1(I + 1, N, ST1).
