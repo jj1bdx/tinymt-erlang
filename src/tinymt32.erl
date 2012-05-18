@@ -37,8 +37,13 @@
 
 -export([next_state/1,
 	 temper/1,
+	 temper_float/1,
 	 init/2,
 	 init_by_list32/2,
+	 seed/0,
+	 seed/1,
+	 seed/3,
+	 uniform/0,
 	 testloop/1]).
 
 -include("tinymt32.hrl").
@@ -82,6 +87,12 @@ temper(R) ->
 	0 -> T2;
 	1 -> T2 bxor R#intstate32.tmat
     end.
+
+%% 0.0 <= result < 1.0
+-spec temper_float(#intstate32{}) -> float().
+
+temper_float(R) ->
+    temper(R) * (1.0 / 4294967296.0).
 
 -spec period_certification(#intstate32{}) -> #intstate32{}.
 
@@ -230,6 +241,64 @@ init_by_list32(R, K) ->
     R1 = period_certification(R#intstate32{status0 = V0, status1 = V1,
 					   status2 = V2, status3 = V3}),
     init_rec2(0, ?PRE_LOOP, R1).
+
+-spec seed0() -> 'undefined' | #intstate32{}.
+		   
+seed0() ->
+    seed_put(
+      #intstate32{status0 = 297425621, status1 = 2108342699,
+		  status2 = 2289213227463, status3 = 2232209075,
+		  mat1 = 2406486510, mat2 = 4235788063, tmat = 932445695}).
+
+-spec seed_put(#intstate32{}) -> 'undefined' | #intstate32{}.
+
+seed_put(R) ->
+    put(tinymt32_seed, R).
+
+-spec seed() -> #intstate32{}.
+		 
+seed() ->
+    case seed_put(seed0()) of
+        undefined -> seed0();
+	#intstate32{status0 = S0, status1 = S1,
+		    status2 = S2, status3 = S3,
+		    mat1 = M1, mat2 = M2, tmat = TM} ->
+	    #intstate32{status0 = S0, status1 = S1,
+			status2 = S2, status3 = S3,
+			mat1 = M1, mat2 = M2, tmat = TM}
+    end.
+
+-spec seed({A1, A2, A3}) -> 'undefined' | #intstate32{} when
+      A1 :: integer(), A2 :: integer(), A3 :: integer().
+
+seed({A1, A2, A3}) ->  
+    seed(A1, A2, A3).
+
+-spec seed(A1, A2, A3) -> 'undefined' | #intstate32{} when
+      A1 :: integer(), A2 :: integer(), A3 :: integer().
+
+seed(A1, A2, A3) ->
+    R1 = case get(tinymt32_seed) of
+	     undefined -> seed0(),
+			  get(tinymt32_seed);
+	     R -> R
+	 end,
+    seed_put(init_by_list32(R1,
+			    [A1 band ?MASK32,
+			     A2 band ?MASK32,
+			     A3 band ?MASK32])).
+
+-spec uniform() -> float().
+
+%% 0.0 <= value < 1.0
+uniform() ->
+    R = case get(tinymt32_seed) of
+	    undefined -> seed0();
+	    Record -> Record
+	end,
+    R2 = next_state(R),
+    put(tinymt32_seed, R2),
+    temper_float(R2).
 
 -spec testloop(pos_integer()) -> list().
 		       
