@@ -283,9 +283,15 @@ seed0() ->
 		  status2 = 2289213227463, status3 = 2232209075,
 		  mat1 = 2406486510, mat2 = 4235788063, tmat = 932445695}).
 
--spec seed_put(#intstate32{}) -> 'undefined' | #intstate32{}.
+-spec seed_put('undefined' | #intstate32{}) -> 'undefined' | #intstate32{}.
 
-seed_put(R) ->
+seed_put(undefined) ->
+    put(tinymt32_seed, undefined),
+    undefined;
+seed_put(
+  #intstate32{status0 = _S0, status1 = _S1,
+	      status2 = _S2, status3 = _S3,
+	      mat1 = _M1, mat2 = _M2, tmat = _TM} = R) ->
     put(tinymt32_seed, R).
 
 -spec seed() -> #intstate32{}.
@@ -293,17 +299,17 @@ seed_put(R) ->
 seed() ->
     case seed_put(seed0()) of
         undefined -> seed0();
-	#intstate32{status0 = S0, status1 = S1,
-		    status2 = S2, status3 = S3,
-		    mat1 = M1, mat2 = M2, tmat = TM} ->
-	    #intstate32{status0 = S0, status1 = S1,
-			status2 = S2, status3 = S3,
-			mat1 = M1, mat2 = M2, tmat = TM}
+	R -> R
     end.
 
--spec seed({A1, A2, A3}) -> 'undefined' | #intstate32{} when
-      A1 :: integer(), A2 :: integer(), A3 :: integer().
-
+-spec seed(#intstate32{}) -> 'undefined' | #intstate32{};
+	  ({A1, A2, A3}) -> 'undefined' | #intstate32{} when
+            A1 :: integer(), A2 :: integer(), A3 :: integer().
+seed(
+  #intstate32{status0 = _S0, status1 = _S1,
+	      status2 = _S2, status3 = _S3,
+	      mat1 = _M1, mat2 = _M2, tmat = _TM} = R) ->
+    seed_put(R);
 seed({A1, A2, A3}) ->  
     seed(A1, A2, A3).
 
