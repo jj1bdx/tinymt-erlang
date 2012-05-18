@@ -1,6 +1,6 @@
 # tinymt-erlang: Tiny Mersenne Twister (TinyMT) for Erlang
 
-* Release date: 28-APR-2012
+* Release date: 18-MAY-2012
 * Edited and written by Kenji Rikitake (Kyoto University)
 * Email contact: <kenji.rikitake@acm.org>
 
@@ -14,10 +14,8 @@ See LICENSE.txt for the license (new/simplified BSD license). (Note:
 license of rebar is Apache 2.0 License.)
 
 This software is based on
-Tiny Mersenne Twister (TinyMT)
-Version 1.0.1
-by Mutsuo Saito (Hiroshima University) and Makoto
-Matsumoto (The University of Tokyo).
+Tiny Mersenne Twister (TinyMT) Version 1.0.1
+by Mutsuo Saito (Hiroshima University) and Makoto Matsumoto (The University of Tokyo).
 
 ## Details of TinyMT algorithm
 
@@ -53,7 +51,6 @@ which will be automatically fetched under the directory `support/`.
 
 ## TODO
 
-* Code checking on `tinymt32:init/2` and `tinymt32:init_by_list32/2`
 * More documentation and code
 * More evaluation and refactoring
 
