@@ -35,15 +35,19 @@
 
 -module(tinymt32).
 
--export([next_state/1,
-	 temper/1,
-	 temper_float/1,
+-export([genrand_max/2,
 	 init/2,
 	 init_by_list32/2,
+	 next_state/1,
 	 seed/0,
 	 seed/1,
 	 seed/3,
+	 temper/1,
+	 temper_float/1,
 	 uniform/0,
+	 uniform/1,
+	 uniform_s/1,
+	 uniform_s/2,
 	 testloop/1]).
 
 -include("tinymt32.hrl").
@@ -93,6 +97,35 @@ temper(R) ->
 
 temper_float(R) ->
     temper(R) * (1.0 / 4294967296.0).
+
+-spec bitlen(pos_integer()) -> pos_integer().
+
+bitlen(N) ->
+    bitlen(N, 0).
+
+-spec bitlen(pos_integer(), pos_integer()) -> pos_integer().
+
+bitlen(N, M) ->
+    case N bsr M of
+	0 -> M;
+	_ -> bitlen(N, M + 1)
+    end.
+
+%% 0 <= result < MAX (integer)
+%% retry until the matched one generated
+-spec genrand_max(#intstate32{}, pos_integer()) -> 
+			 {#intstate32{}, uint32()}.
+
+genrand_max(R, Max) when is_integer(Max), Max > 0 ->
+    genrand_max(R, Max, 32 - bitlen(Max)).
+
+genrand_max(R, M, S) ->
+    R1 = next_state(R),
+    V = temper(R1) bsr S,
+    case V >= M of
+	false -> {R1, V};
+	true -> genrand_max(R1, M, S)
+    end.
 
 -spec period_certification(#intstate32{}) -> #intstate32{}.
 
@@ -291,14 +324,47 @@ seed(A1, A2, A3) ->
 -spec uniform() -> float().
 
 %% 0.0 <= value < 1.0
+uniform_s(R0) ->
+    R1 = next_state(R0),
+    {temper_float(R1), R1}.
+
+%% 0.0 <= value < 1.0
 uniform() ->
     R = case get(tinymt32_seed) of
-	    undefined -> seed0();
+	    undefined -> seed0(),
+			 get(tinymt32_seed);
 	    Record -> Record
 	end,
-    R2 = next_state(R),
+    {V, R2} = uniform_s(R),
     put(tinymt32_seed, R2),
-    temper_float(R2).
+    V.
+
+-spec uniform_s(R0) -> {float(), R1} when
+      R0 :: #intstate32{},
+      R1 :: #intstate32{}.
+
+%% 1 <= value <= N
+-spec uniform_s(N, R0) -> {integer(), R1} when
+      N :: pos_integer(),
+      R0 :: #intstate32{},
+      R1 :: #intstate32{}.
+
+uniform_s(N, R0) when N > 1 ->
+    {R1, V} = genrand_max(R0, N),
+    {V + 1, R1}.
+
+%% 1 <= value <= N
+-spec uniform(N) -> pos_integer() when
+      N :: pos_integer().
+uniform(N) ->
+    R = case get(tinymt32_seed) of
+	    undefined -> seed0(),
+			 get(tinymt32_seed);
+	    Record -> Record
+	end,
+    {V, R2} = uniform_s(N, R),
+    put(tinymt32_seed, R2),
+    V.
 
 -spec testloop(pos_integer()) -> list().
 		       
