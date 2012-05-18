@@ -48,5 +48,5 @@
 -define(TINYMT32_SH1, 10).
 -define(TINYMT32_SH8, 8).
 -define(TINYMT32_MASK, 16#7fffffff).
--define(MASK32, 16#ffffffff).
+-define(TINYMT32_UINT32, 16#ffffffff).
 

@@ -64,11 +64,11 @@ next_state(R) ->
     Y0 = R#intstate32.status3,
     X0 = (R#intstate32.status0 band ?TINYMT32_MASK)
 	bxor R#intstate32.status1 bxor R#intstate32.status2,
-    X1 = (X0 bxor (X0 bsl ?TINYMT32_SH0)) band ?MASK32,
+    X1 = (X0 bxor (X0 bsl ?TINYMT32_SH0)) band ?TINYMT32_UINT32,
     Y1 = Y0 bxor (Y0 bsr ?TINYMT32_SH0) bxor X1,
     S0 = R#intstate32.status1,
     S10 = R#intstate32.status2,
-    S20 = (X1 bxor (Y1 bsl ?TINYMT32_SH1)) band ?MASK32,
+    S20 = (X1 bxor (Y1 bsl ?TINYMT32_SH1)) band ?TINYMT32_UINT32,
     S3 = Y1,
     S1 = case (Y1 band 1) of
 	     0 -> S10;
@@ -85,7 +85,7 @@ next_state(R) ->
 temper(R) ->
     T0 = R#intstate32.status3,
     T1 = (R#intstate32.status0 + (R#intstate32.status2 bsr ?TINYMT32_SH8))
-	band ?MASK32,
+	band ?TINYMT32_UINT32,
     T2 = T0 bxor T1,
     case (T1 band 1) of
 	0 -> T2;
@@ -143,12 +143,12 @@ period_certification(_R) -> _R.
 -spec ini_func1(uint32()) -> uint32().
 
 ini_func1(X) ->
-    ((X bxor (X bsr 27)) * 1664525) band ?MASK32.
+    ((X bxor (X bsr 27)) * 1664525) band ?TINYMT32_UINT32.
 
 -spec ini_func2(uint32()) -> uint32().
 
 ini_func2(X) ->
-    ((X bxor (X bsr 27)) * 1566083941) band ?MASK32.
+    ((X bxor (X bsr 27)) * 1566083941) band ?TINYMT32_UINT32.
 
 -spec init_rec1(integer(), integer(), array()) -> array().
 
@@ -159,7 +159,7 @@ init_rec1(I, N, ST) when I < N ->
     ST1 = array:set(I band 3,
 		    (array:get(I band 3, ST) bxor
 			 (I + (1812433253 * (V1 bxor (V1 bsr 30))))
-			 band ?MASK32), ST),
+			 band ?TINYMT32_UINT32), ST),
     init_rec1(I + 1, N, ST1).
 
 -spec init_rec2(integer(), integer(), #intstate32{}) -> #intstate32{}.
@@ -194,11 +194,11 @@ init_by_list32_rec1(K, I, [], ST) ->
                   array:get((I + ?MID) rem ?SIZE, ST) bxor
                   array:get((I + ?SIZE - 1) rem ?SIZE, ST)),
     ST2 = array:set((I + ?MID) rem ?SIZE,
-                   (array:get((I + ?MID) rem ?SIZE, ST) + RR) band ?MASK32,
+                   (array:get((I + ?MID) rem ?SIZE, ST) + RR) band ?TINYMT32_UINT32,
                     ST),
-    RR2 = (RR + I) band ?MASK32,
+    RR2 = (RR + I) band ?TINYMT32_UINT32,
     ST3 = array:set((I + ?MID + ?LAG) rem ?SIZE,
-                 (array:get((I + ?MID + ?LAG) rem ?SIZE, ST2) + RR2) band ?MASK32,
+                 (array:get((I + ?MID + ?LAG) rem ?SIZE, ST2) + RR2) band ?TINYMT32_UINT32,
                  ST2),
     ST4 = array:set(I, RR2, ST3),
     I2 = (I + 1) rem ?SIZE,
@@ -208,12 +208,12 @@ init_by_list32_rec1(K, I, Key, ST) ->
                   array:get((I + ?MID) rem ?SIZE, ST) bxor
                   array:get((I + ?SIZE - 1) rem ?SIZE, ST)),
     ST2 = array:set((I + ?MID) rem ?SIZE,
-                   (array:get((I + ?MID) rem ?SIZE, ST) + RR) band ?MASK32,
+                   (array:get((I + ?MID) rem ?SIZE, ST) + RR) band ?TINYMT32_UINT32,
                     ST),
     [H|T] = Key,
-    RR2 = (RR + H + I) band ?MASK32,
+    RR2 = (RR + H + I) band ?TINYMT32_UINT32,
     ST3 = array:set((I + ?MID + ?LAG) rem ?SIZE,
-                 (array:get((I + ?MID + ?LAG) rem ?SIZE, ST2) + RR2) band ?MASK32,
+                 (array:get((I + ?MID + ?LAG) rem ?SIZE, ST2) + RR2) band ?TINYMT32_UINT32,
                  ST2),
     ST4 = array:set(I, RR2, ST3),
     I2 = (I + 1) rem ?SIZE,
@@ -226,11 +226,11 @@ init_by_list32_rec2(0, _, ST) ->
 init_by_list32_rec2(K, I, ST) ->
     RR = ini_func2((array:get(I, ST) +
                   array:get((I + ?MID) rem ?SIZE, ST) +
-                  array:get((I + ?SIZE - 1) rem ?SIZE, ST)) band ?MASK32),
+                  array:get((I + ?SIZE - 1) rem ?SIZE, ST)) band ?TINYMT32_UINT32),
     ST2 = array:set((I + ?MID) rem ?SIZE,
                    (array:get((I + ?MID) rem ?SIZE, ST) bxor RR),
                    ST),
-    RR2 = (RR - I) band ?MASK32,
+    RR2 = (RR - I) band ?TINYMT32_UINT32,
     ST3 = array:set((I + ?MID + ?LAG) rem ?SIZE,
                    (array:get((I + ?MID + ?LAG) rem ?SIZE, ST2) bxor RR2),
                    ST2),
@@ -260,11 +260,11 @@ init_by_list32(R, K) ->
                   array:get(?MID rem ?SIZE, ST3) bxor
                   array:get((?SIZE - 1) rem ?SIZE, ST3)),
     ST4 = array:set(?MID rem ?SIZE,
-		    (array:get(?MID rem ?SIZE, ST3) + RR1) band ?MASK32,
+		    (array:get(?MID rem ?SIZE, ST3) + RR1) band ?TINYMT32_UINT32,
                     ST3),
-    RR2 = (RR1 + KL) band ?MASK32,
+    RR2 = (RR1 + KL) band ?TINYMT32_UINT32,
     ST5 = array:set((?MID + ?LAG) rem ?SIZE,
-                   (array:get((?MID + ?LAG) rem ?SIZE, ST4) + RR2) band ?MASK32,
+                   (array:get((?MID + ?LAG) rem ?SIZE, ST4) + RR2) band ?TINYMT32_UINT32,
                     ST4),
     ST6 = array:set(0, RR2, ST5),
     C1 = C - 1,
@@ -317,9 +317,9 @@ seed(A1, A2, A3) ->
 	     R -> R
 	 end,
     seed_put(init_by_list32(R1,
-			    [A1 band ?MASK32,
-			     A2 band ?MASK32,
-			     A3 band ?MASK32])).
+			    [A1 band ?TINYMT32_UINT32,
+			     A2 band ?TINYMT32_UINT32,
+			     A3 band ?TINYMT32_UINT32])).
 
 -spec uniform() -> float().
 
