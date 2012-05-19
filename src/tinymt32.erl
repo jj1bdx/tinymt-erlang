@@ -35,10 +35,10 @@
 
 -module(tinymt32).
 
--export([genrand_max/2,
-	 init/2,
+-export([init/2,
 	 init_by_list32/2,
 	 next_state/1,
+	 seed0/0,
 	 seed/0,
 	 seed/1,
 	 seed/3,
@@ -98,34 +98,6 @@ temper(R) ->
 temper_float(R) ->
     temper(R) * (1.0 / 4294967296.0).
 
--spec bitlen(pos_integer()) -> pos_integer().
-
-bitlen(N) ->
-    bitlen(N, 0).
-
--spec bitlen(pos_integer(), pos_integer()) -> pos_integer().
-
-bitlen(N, M) ->
-    case N bsr M of
-	0 -> M;
-	_ -> bitlen(N, M + 1)
-    end.
-
-%% 0 <= result < MAX (integer)
-%% retry until the matched one generated
--spec genrand_max(#intstate32{}, pos_integer()) -> 
-			 {#intstate32{}, uint32()}.
-
-genrand_max(R, Max) when is_integer(Max), Max > 0 ->
-    genrand_max(R, Max, 32 - bitlen(Max)).
-
-genrand_max(R, M, S) ->
-    R1 = next_state(R),
-    V = temper(R1) bsr S,
-    case V >= M of
-	false -> {R1, V};
-	true -> genrand_max(R1, M, S)
-    end.
 
 -spec period_certification(#intstate32{}) -> #intstate32{}.
 
@@ -338,29 +310,43 @@ uniform() ->
       R0 :: #intstate32{},
       R1 :: #intstate32{}.
 
-%% 1 <= value <= N
+%% 0 <= result < MAX (integer)
 -spec uniform_s(N, R0) -> {integer(), R1} when
       N :: pos_integer(),
       R0 :: #intstate32{},
       R1 :: #intstate32{}.
 
-uniform_s(N, R0) when is_integer(N), N > 1 ->
-    {V, R1} = uniform_s(R0),
-    {trunc(V * N) + 1, R1}.
+-define(TWOPOW32, 16#100000000).
+
+uniform_s(Max, R) when is_integer(Max), Max > 1 ->
+    Limit = ?TWOPOW32 - (?TWOPOW32 rem Max),
+    uniform_s(Max, Limit, R).
+
+uniform_s(M, L, R) ->
+    R1 = next_state(R),
+    V = temper(R1),
+    case V < L of
+	true -> {(V rem M) + 1, R1};
+	false -> uniform_s(M, L, R1)
+    end.
 
 %% 1 <= value <= N
 -spec uniform(N) -> pos_integer() when
       N :: pos_integer().
 
 uniform(N) when is_integer(N), N > 1 ->
-    trunc(uniform() * N) + 1.
+    R = case get(tinymt32_seed) of
+	    undefined -> seed0();
+	    _R -> _R
+	end,
+    {V, R1} = uniform_s(N, R),
+    put(tinymt32_seed, R1),
+    V.
 
 -spec testloop(pos_integer()) -> list().
 		       
 testloop(N) ->
-    R = #intstate32{status0 = 297425621, status1 = 2108342699,
-            status2 = 2289213227463, status3 = 2232209075,
-            mat1 = 2406486510, mat2 = 4235788063, tmat = 932445695},
+    R = seed0(),
     testloop(N, R, []).
 
 testloop(0, _, L) ->
