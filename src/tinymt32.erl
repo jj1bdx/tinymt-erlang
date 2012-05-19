@@ -269,19 +269,12 @@ seed() ->
 seed_put(R) ->
     put(tinymt32_seed, R).
 
--spec seed(#intstate32{}) -> 'undefined' | #intstate32{};
-	  ({A1, A2, A3}) -> 'undefined' | #intstate32{} when
-            A1 :: integer(), A2 :: integer(), A3 :: integer().
-seed(
-  #intstate32{status0 = _S0, status1 = _S1,
-	      status2 = _S2, status3 = _S3,
-	      mat1 = _M1, mat2 = _M2, tmat = _TM} = R) ->
-    seed_put(R);
+-spec seed({integer(), integer(), integer()}) -> 'undefined' | #intstate32{}.
+
 seed({A1, A2, A3}) ->  
     seed(A1, A2, A3).
 
--spec seed(A1, A2, A3) -> 'undefined' | #intstate32{} when
-      A1 :: integer(), A2 :: integer(), A3 :: integer().
+-spec seed(integer(), integer(), integer()) -> 'undefined' | #intstate32{}.
 
 seed(A1, A2, A3) ->
     seed_put(init_by_list32(seed0(),
@@ -289,12 +282,14 @@ seed(A1, A2, A3) ->
 			     A2 band ?TINYMT32_UINT32,
 			     A3 band ?TINYMT32_UINT32])).
 
--spec uniform() -> float().
+-spec uniform_s(#intstate32{}) -> {float(), #intstate32{}}.
 
 %% 0.0 <= value < 1.0
 uniform_s(R0) ->
     R1 = next_state(R0),
     {temper_float(R1), R1}.
+
+-spec uniform() -> float().
 
 %% 0.0 <= value < 1.0
 uniform() ->
@@ -306,15 +301,8 @@ uniform() ->
     put(tinymt32_seed, R2),
     V.
 
--spec uniform_s(R0) -> {float(), R1} when
-      R0 :: #intstate32{},
-      R1 :: #intstate32{}.
-
 %% 0 <= result < MAX (integer)
--spec uniform_s(N, R0) -> {integer(), R1} when
-      N :: pos_integer(),
-      R0 :: #intstate32{},
-      R1 :: #intstate32{}.
+-spec uniform_s(pos_integer(), #intstate32{}) -> {pos_integer(), #intstate32{}}.
 
 -define(TWOPOW32, 16#100000000).
 
@@ -331,8 +319,7 @@ uniform_s(M, L, R) ->
     end.
 
 %% 1 <= value <= N
--spec uniform(N) -> pos_integer() when
-      N :: pos_integer().
+-spec uniform(pos_integer()) -> pos_integer().
 
 uniform(N) when is_integer(N), N > 1 ->
     R = case get(tinymt32_seed) of
