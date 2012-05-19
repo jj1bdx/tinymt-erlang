@@ -275,32 +275,27 @@ init_by_list32(R, K) ->
 					   status2 = V2, status3 = V3}),
     init_rec2(0, ?PRE_LOOP, R1).
 
--spec seed0() -> 'undefined' | #intstate32{}.
+-spec seed0() -> #intstate32{}.
 		   
 seed0() ->
-    seed_put(
-      #intstate32{status0 = 297425621, status1 = 2108342699,
+    #intstate32{status0 = 297425621, status1 = 2108342699,
 		  status2 = 2289213227463, status3 = 2232209075,
-		  mat1 = 2406486510, mat2 = 4235788063, tmat = 932445695}).
-
--spec seed_put('undefined' | #intstate32{}) -> 'undefined' | #intstate32{}.
-
-seed_put(undefined) ->
-    put(tinymt32_seed, undefined),
-    undefined;
-seed_put(
-  #intstate32{status0 = _S0, status1 = _S1,
-	      status2 = _S2, status3 = _S3,
-	      mat1 = _M1, mat2 = _M2, tmat = _TM} = R) ->
-    put(tinymt32_seed, R).
+		  mat1 = 2406486510, mat2 = 4235788063, tmat = 932445695}.
 
 -spec seed() -> #intstate32{}.
 		 
 seed() ->
     case seed_put(seed0()) of
         undefined -> seed0();
-	R -> R
+	#intstate32{status0 = _S0, status1 = _S1,
+		    status2 = _S2, status3 = _S3,
+		    mat1 = _M1, mat2 = _M2, tmat = _TM} = R -> R
     end.
+
+-spec seed_put(#intstate32{}) -> #intstate32{}.
+
+seed_put(R) ->
+    put(tinymt32_seed, R).
 
 -spec seed(#intstate32{}) -> 'undefined' | #intstate32{};
 	  ({A1, A2, A3}) -> 'undefined' | #intstate32{} when
@@ -317,12 +312,7 @@ seed({A1, A2, A3}) ->
       A1 :: integer(), A2 :: integer(), A3 :: integer().
 
 seed(A1, A2, A3) ->
-    R1 = case get(tinymt32_seed) of
-	     undefined -> seed0(),
-			  get(tinymt32_seed);
-	     R -> R
-	 end,
-    seed_put(init_by_list32(R1,
+    seed_put(init_by_list32(seed0(),
 			    [A1 band ?TINYMT32_UINT32,
 			     A2 band ?TINYMT32_UINT32,
 			     A3 band ?TINYMT32_UINT32])).
@@ -337,9 +327,8 @@ uniform_s(R0) ->
 %% 0.0 <= value < 1.0
 uniform() ->
     R = case get(tinymt32_seed) of
-	    undefined -> seed0(),
-			 get(tinymt32_seed);
-	    Record -> Record
+	    undefined -> seed0();
+	    _R -> _R
 	end,
     {V, R2} = uniform_s(R),
     put(tinymt32_seed, R2),
@@ -355,22 +344,16 @@ uniform() ->
       R0 :: #intstate32{},
       R1 :: #intstate32{}.
 
-uniform_s(N, R0) when N > 1 ->
-    {R1, V} = genrand_max(R0, N),
-    {V + 1, R1}.
+uniform_s(N, R0) when is_integer(N), N > 1 ->
+    {V, R1} = uniform_s(R0),
+    {trunc(V * N) + 1, R1}.
 
 %% 1 <= value <= N
 -spec uniform(N) -> pos_integer() when
       N :: pos_integer().
-uniform(N) ->
-    R = case get(tinymt32_seed) of
-	    undefined -> seed0(),
-			 get(tinymt32_seed);
-	    Record -> Record
-	end,
-    {V, R2} = uniform_s(N, R),
-    put(tinymt32_seed, R2),
-    V.
+
+uniform(N) when is_integer(N), N > 1 ->
+    trunc(uniform() * N) + 1.
 
 -spec testloop(pos_integer()) -> list().
 		       
@@ -385,5 +368,3 @@ testloop(0, _, L) ->
 testloop(N, R, L) ->
     R1 = next_state(R),
     testloop(N - 1, R1, [temper(R1)|L]).
-
-
