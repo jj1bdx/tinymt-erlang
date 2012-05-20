@@ -52,6 +52,8 @@
 
 -include("tinymt32.hrl").
 
+-define(TWOPOW32, 16#100000000).
+
 -define(MIN_LOOP, 8).
 -define(PRE_LOOP, 8).
 -define(LAG, 1).
@@ -70,14 +72,9 @@ next_state(R) ->
     S10 = R#intstate32.status2,
     S20 = (X1 bxor (Y1 bsl ?TINYMT32_SH1)) band ?TINYMT32_UINT32,
     S3 = Y1,
-    S1 = case (Y1 band 1) of
-	     0 -> S10;
-	     1 -> S10 bxor R#intstate32.mat1
-	 end,
-    S2 = case (Y1 band 1) of
-	     0 -> S20;
-	     1 -> S20 bxor R#intstate32.mat2
-	 end,
+    Y1M = (?TWOPOW32 - (Y1 band 1)) band ?TINYMT32_UINT32,
+    S1 = S10 bxor (R#intstate32.mat1 band Y1M),
+    S2 = S20 bxor (R#intstate32.mat2 band Y1M),
     R#intstate32{status0 = S0, status1 = S1, status2 = S2, status3 = S3}.
 
 -spec temper(#intstate32{}) -> uint32().
@@ -87,17 +84,14 @@ temper(R) ->
     T1 = (R#intstate32.status0 + (R#intstate32.status2 bsr ?TINYMT32_SH8))
 	band ?TINYMT32_UINT32,
     T2 = T0 bxor T1,
-    case (T1 band 1) of
-	0 -> T2;
-	1 -> T2 bxor R#intstate32.tmat
-    end.
+    T1M = (?TWOPOW32 - (T1 band 1)) band ?TINYMT32_UINT32,
+    T2 bxor (R#intstate32.tmat band T1M).
 
 %% 0.0 <= result < 1.0
 -spec temper_float(#intstate32{}) -> float().
 
 temper_float(R) ->
     temper(R) * (1.0 / 4294967296.0).
-
 
 -spec period_certification(#intstate32{}) -> #intstate32{}.
 
@@ -303,8 +297,6 @@ uniform() ->
 
 %% 0 <= result < MAX (integer)
 -spec uniform_s(pos_integer(), #intstate32{}) -> {pos_integer(), #intstate32{}}.
-
--define(TWOPOW32, 16#100000000).
 
 uniform_s(Max, R) when is_integer(Max), Max > 1 ->
     Limit = ?TWOPOW32 - (?TWOPOW32 rem Max),
