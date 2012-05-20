@@ -298,7 +298,7 @@ uniform() ->
 %% 0 <= result < MAX (integer)
 -spec uniform_s(pos_integer(), #intstate32{}) -> {pos_integer(), #intstate32{}}.
 
-uniform_s(Max, R) when is_integer(Max), Max > 1 ->
+uniform_s(Max, R) when is_integer(Max), Max >= 1 ->
     Limit = ?TWOPOW32 - (?TWOPOW32 rem Max),
     uniform_s(Max, Limit, R).
 
@@ -313,7 +313,7 @@ uniform_s(M, L, R) ->
 %% 1 <= value <= N
 -spec uniform(pos_integer()) -> pos_integer().
 
-uniform(N) when is_integer(N), N > 1 ->
+uniform(N) when is_integer(N), N >= 1 ->
     R = case get(tinymt32_seed) of
 	    undefined -> seed0();
 	    _R -> _R
