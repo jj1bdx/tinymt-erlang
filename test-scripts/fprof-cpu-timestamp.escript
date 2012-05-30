@@ -14,7 +14,7 @@ main(_) ->
     tinymt32_tests:test_speed(),
     fprof:trace(stop),
     fprof:profile(),
-    fprof:analyse({dest, "test_speed.txt"}),
+    fprof:analyse({dest, "test_speed_cputimestamp.txt"}),
 
     io:format("end of fprof.escript~n"),
     ok.
