@@ -46,8 +46,7 @@ test_speed_tinymt_uniform_rec1(Acc, X, 0, R, I) ->
     _ = lists:reverse(Acc),
     test_speed_tinymt_uniform_rec1([], X - 1, R, R, I);
 test_speed_tinymt_uniform_rec1(Acc, X, Q, R, I) ->
-    I2 = tinymt32:next_state(I),
-    F = tinymt32:temper(I2),
+    {F, I2} = tinymt32:uniform_s(I),
     test_speed_tinymt_uniform_rec1([F|Acc], X, Q - 1, R, I2).
 
 test_speed_tinymt_uniform(P, Q) ->
