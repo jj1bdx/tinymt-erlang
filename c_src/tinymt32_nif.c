@@ -261,13 +261,13 @@ tinymt32_nif_next_state(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
     return enif_make_tuple8(env,
 			    elements[0],
-			    enif_make_int(env, new.status[0]),
-			    enif_make_int(env, new.status[1]),
-			    enif_make_int(env, new.status[2]),
-			    enif_make_int(env, new.status[3]),
-			    enif_make_int(env, new.mat1),
-			    enif_make_int(env, new.mat2),
-			    enif_make_int(env, new.tmat));
+			    enif_make_uint(env, new.status[0]),
+			    enif_make_uint(env, new.status[1]),
+			    enif_make_uint(env, new.status[2]),
+			    enif_make_uint(env, new.status[3]),
+			    enif_make_uint(env, new.mat1),
+			    enif_make_uint(env, new.mat2),
+			    enif_make_uint(env, new.tmat));
 
 }
 
@@ -297,7 +297,7 @@ tinymt32_nif_temper(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
     n = tinymt32_temper(&state);
 
-    return enif_make_int(env, n);
+    return enif_make_uint(env, n);
 
 }
 
