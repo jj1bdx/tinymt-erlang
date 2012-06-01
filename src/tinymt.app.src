@@ -1,6 +1,6 @@
 {application, tinymt, [
-    {description, "IPv6 hex address library for Erlang"},
-    {vsn, "0.0.2"},
+    {description, "TinyMT PRNG for Erlang"},
+    {vsn, "0.0.9"},
     {env, []},
     {registered, []},
     {modules, [tinymt32]},
