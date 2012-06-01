@@ -51,9 +51,7 @@ test_speed_tinymt_uniform_rec1(Acc, X, Q, R, I) ->
 
 test_speed_tinymt_uniform(P, Q) ->
     _ = statistics(runtime),
-    I = #intstate32{status0 = 297425621, status1 = 2108342699,
-            status2 = 4290625991, status3 = 2232209075,
-            mat1 = 2406486510, mat2 = 4235788063, tmat = 932445695},
+    I = tinymt32:seed(),
     ok = test_speed_tinymt_uniform_rec1([], P, Q, Q, I),
     {_, T} = statistics(runtime),
     T.
