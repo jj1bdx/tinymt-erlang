@@ -59,7 +59,7 @@
 #define TINYMT32_SH1 10
 #define TINYMT32_SH8 8
 #define TINYMT32_MASK UINT32_C(0x7fffffff)
-#define TINYMT32_MUL (1.0f / 4294967296.0f)
+#define TINYMT32_MUL (1.0 / 4294967296.0)
 
 /**
  * tinymt32 internal state vector and parameters
@@ -85,6 +85,8 @@ static void unload(ErlNifEnv* env, void* priv_data);
 static ERL_NIF_TERM tinymt32_nif_get_lib_refc(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
 static ERL_NIF_TERM tinymt32_nif_next_state(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
 static ERL_NIF_TERM tinymt32_nif_temper(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
+static ERL_NIF_TERM tinymt32_nif_temper_float(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
+static ERL_NIF_TERM tinymt32_nif_uniform_s_1(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
 
 inline static void tinymt32_next_state(tinymt32_t *random, tinymt32_t *random2);
 inline static uint32_t tinymt32_temper(tinymt32_t *random);
@@ -96,7 +98,9 @@ static int lib_refc = 0;
 static ErlNifFunc nif_funcs[] = {
     {"get_lib_refc", 0, tinymt32_nif_get_lib_refc},
     {"next_state", 1, tinymt32_nif_next_state},
-    {"temper", 1, tinymt32_nif_temper}
+    {"temper", 1, tinymt32_nif_temper},
+    {"temper_float", 1, tinymt32_nif_temper_float},
+    {"uniform_s", 1, tinymt32_nif_uniform_s_1}
 };
 
 /* Function call macro to initialize NIF. */
@@ -298,6 +302,80 @@ tinymt32_nif_temper(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
     n = tinymt32_temper(&state);
 
     return enif_make_uint(env, n);
+
+}
+
+static ERL_NIF_TERM
+tinymt32_nif_temper_float(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
+{ /* (#intstate32{}, 8 element tuple) */
+    tinymt32_t state;
+    int arity;
+    const ERL_NIF_TERM *elements;
+    double d;
+
+    if (!enif_get_tuple(env, argv[0], &arity, &elements)
+        || arity != 8 ) {
+	return enif_make_badarg(env);
+    }
+
+    if (!enif_is_atom(env, elements[0])
+	|| !enif_get_uint(env, elements[1], &state.status[0])
+	|| !enif_get_uint(env, elements[2], &state.status[1])
+	|| !enif_get_uint(env, elements[3], &state.status[2])
+	|| !enif_get_uint(env, elements[4], &state.status[3])
+	|| !enif_get_uint(env, elements[5], &state.mat1)
+	|| !enif_get_uint(env, elements[6], &state.mat2)
+	|| !enif_get_uint(env, elements[7], &state.tmat)) {
+	return enif_make_badarg(env);
+    }
+
+    d = tinymt32_temper(&state) * TINYMT32_MUL;
+
+    return enif_make_double(env, d);
+
+}
+
+static ERL_NIF_TERM
+tinymt32_nif_uniform_s_1(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
+{ /* (#intstate32{}, 8 element tuple) */
+    tinymt32_t old, new;
+    int arity;
+    const ERL_NIF_TERM *elements;
+    double d;
+
+    if (!enif_get_tuple(env, argv[0], &arity, &elements)
+        || arity != 8 ) {
+	return enif_make_badarg(env);
+    }
+
+    if (!enif_is_atom(env, elements[0])
+	|| !enif_get_uint(env, elements[1], &old.status[0])
+	|| !enif_get_uint(env, elements[2], &old.status[1])
+	|| !enif_get_uint(env, elements[3], &old.status[2])
+	|| !enif_get_uint(env, elements[4], &old.status[3])
+	|| !enif_get_uint(env, elements[5], &old.mat1)
+	|| !enif_get_uint(env, elements[6], &old.mat2)
+	|| !enif_get_uint(env, elements[7], &old.tmat)) {
+	return enif_make_badarg(env);
+    }
+
+    new.mat1 = old.mat1;
+    new.mat2 = old.mat2;
+    new.tmat = old.tmat;
+    tinymt32_next_state(&old, &new);
+    d = tinymt32_temper(&new) * TINYMT32_MUL;
+
+    return enif_make_tuple2(env,
+			    enif_make_double(env, d),
+			    enif_make_tuple8(env,
+					     elements[0],
+					     enif_make_uint(env, new.status[0]),
+					     enif_make_uint(env, new.status[1]),
+					     enif_make_uint(env, new.status[2]),
+					     enif_make_uint(env, new.status[3]),
+					     enif_make_uint(env, new.mat1),
+					     enif_make_uint(env, new.mat2),
+					     enif_make_uint(env, new.tmat)));
 
 }
 
