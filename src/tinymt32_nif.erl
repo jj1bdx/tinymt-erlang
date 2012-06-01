@@ -249,7 +249,7 @@ init_by_list32(R, K) ->
 		   
 seed0() ->
     #intstate32{status0 = 297425621, status1 = 2108342699,
-		  status2 = 2289213227463, status3 = 2232209075,
+		  status2 = 4290625991, status3 = 2232209075,
 		  mat1 = 2406486510, mat2 = 4235788063, tmat = 932445695}.
 
 -spec seed() -> #intstate32{}.
