@@ -1,6 +1,6 @@
 # tinymt-erlang: Tiny Mersenne Twister (TinyMT) for Erlang
 
-* Release date: 20-MAY-2012
+* Release date: 1-JUN-2012
 * Edited and written by Kenji Rikitake (Kyoto University)
 * Email contact: <kenji.rikitake@acm.org>
 
@@ -21,6 +21,17 @@ by Mutsuo Saito (Hiroshima University) and Makoto Matsumoto (The University of T
 
 * See <http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/TINYMT/index.html>
 * Also see <https://github.com/jj1bdx/TinyMT/> for my fork of the reference code
+
+## Features
+
+* Minimal NIF version added as `tinymt32_nif`.
+
+## Notes
+
+* In versions released previously before 31-MAY-2012 (inclusive),
+  `seed0/0` had a wrong value in the `#status2` member of the record
+  which exceeded the limit of 2^32.  This has been fixed by the
+  corresponding 32-bit value.
 
 ## Tested platforms
 
