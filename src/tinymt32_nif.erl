@@ -51,6 +51,7 @@
 	 uniform/1,
 	 uniform_s/1,
 	 uniform_s/2,
+	 uniform_nothing/2,
 	 testloop/1,
 	 get_lib_refc/0]).
 
@@ -325,6 +326,12 @@ uniform(N) when is_integer(N), N >= 1 ->
     {V, R1} = uniform_s(N, R),
     put(tinymt32_seed, R1),
     V.
+
+%% 0 <= result < MAX (integer)
+-spec uniform_nothing(pos_integer(), #intstate32{}) -> {pos_integer(), #intstate32{}}.
+
+uniform_nothing(_N, R) ->
+    {0, R}.
 
 -spec testloop(pos_integer()) -> list().
 		       
