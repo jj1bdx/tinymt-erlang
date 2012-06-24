@@ -55,11 +55,6 @@ which will be automatically fetched under the directory `support/`.
 
     make eunit
 
-## Preliminary benchmark results
-
-* On i386: tinymt takes x2 CPU time than random (slower than random) 
-* On amd64: tinymt takes x0.7 CPU time than random (faster than random)
-
 ## TODO
 
 * More documentation and code
