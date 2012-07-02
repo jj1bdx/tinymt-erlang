@@ -102,7 +102,7 @@ static ErlNifFunc nif_funcs[] = {
     {"temper", 1, tinymt32_nif_temper},
     {"temper_float", 1, tinymt32_nif_temper_float},
     {"uniform_s", 1, tinymt32_nif_uniform_s_1},
-    {"uniform_s", 2, tinymt32_nif_uniform_s_2},
+    {"uniform_s", 2, tinymt32_nif_uniform_s_2}
 };
 
 /* Function call macro to initialize NIF. */
