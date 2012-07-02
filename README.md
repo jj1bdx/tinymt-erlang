@@ -1,6 +1,6 @@
 # tinymt-erlang: Tiny Mersenne Twister (TinyMT) for Erlang
 
-* Release date: 1-JUN-2012
+* Release date: 2-JUL-2012
 * Edited and written by Kenji Rikitake (Kyoto University)
 * Email contact: <kenji.rikitake@acm.org>
 
@@ -32,6 +32,10 @@ by Mutsuo Saito (Hiroshima University) and Makoto Matsumoto (The University of T
   `seed0/0` had a wrong value in the `#status2` member of the record
   which exceeded the limit of 2^32.  This has been fixed by the
   corresponding 32-bit value.
+
+* `tinymt32_nif.erl` and `tinymt32_nif_tests.erl` will cause compilation errors
+  when building with HiPE options in `rebar.config`; move the source files
+  out of the `src/` directory when testing HiPE.
 
 ## Tested platforms
 
