@@ -1,6 +1,6 @@
 # tinymt-erlang: Tiny Mersenne Twister (TinyMT) for Erlang
 
-* Release date: 2-JUL-2012
+* Release date: 11-JUL-2012
 * Edited and written by Kenji Rikitake (Kyoto University)
 * Email contact: <kenji.rikitake@acm.org>
 
@@ -37,12 +37,29 @@ by Mutsuo Saito (Hiroshima University) and Makoto Matsumoto (The University of T
   when building with HiPE options in `rebar.config`; move the source files
   out of the `src/` directory when testing HiPE.
 
+## On execution speed
+
+* The HiPE version is about two to three times faster than non-HiPE-non-NIF
+  version, measured in overall execution time, on x86_64/amd64
+  architectures. (see `test-scripts/testspeed.escript`) If you need a
+  fast execution, compile with the HiPE option. (see `rebar.config`)
+
+* The non-HiPE-non-NIF version is about six times slower than `random` module
+  on x86_64/amd64, measured by `fprof`.  This is presumably due to increased
+  computational complexity of the algorithm.
+
+* The NIF version is about six times faster than non-HiPE-non-NIF
+  version on x86_64/amd64, measured by `fprof`.  The bottleneck is
+  presumably function calls and memory allocation themselves than the
+  computational work for TinyMT internal state recursion.
+
 ## Tested platforms
 
 * FreeBSD/amd64 9.0-STABLE with Erlang/OTP R15B01
 * FreeBSD/i386 8.3-RELEASE with Erlang/OTP R15B01
 * Windows 7 64bit with Erlang/OTP R15B01 (no rebar support)
 * Ubuntu Linux 12.04 with Erlang/OTP R15B01
+* RedHat Enterprise Linux 6 with Erlang/OTP R15B01
 
 ## Building 
 
@@ -64,14 +81,24 @@ which will be automatically fetched under the directory `support/`.
 * More documentation and code
 * More evaluation and refactoring
 
-## Code authors:
+## Code authors
 
 * Kenji Rikitake
 * Mutsuo Saito
 * Makoto Matsumoto
 
-## THANKS to:
+## THANKS to
 
 * Dave "dizzyd" Smith
 * Tuncer Ayaz
 
+## Acknowledgments
+
+* Kenji Rikitake used the supercomputer service provided by Academic
+  Center for Computing and Media Studies (ACCMS), Kyoto University, for
+  testing this program and fundamental studies of TinyMT generation
+  parameters.
+
+* Kenji Rikitake thanks the Program Committee of ACM Erlang Workshop
+  2012 to give him a chance to present this work as a Practice and
+  Application paper.
