@@ -51,6 +51,8 @@
 	 uniform/1,
 	 uniform_s/1,
 	 uniform_s/2,
+	 uniform_s_list/2,
+	 uniform_s_list/3,
 	 testloop/1,
 	 get_lib_refc/0]).
 
@@ -326,6 +328,9 @@ uniform(N) when is_integer(N), N >= 1 ->
     put(tinymt32_seed, R1),
     V.
 
+-spec uniform_s_list(pos_integer(), #intstate32{}) -> {list(float()), #intstate32{}}.
+-spec uniform_s_list(pos_integer(), pos_integer(), #intstate32{}) -> {list(pos_integer()), #intstate32{}}.
+
 -spec testloop(pos_integer()) -> list().
 		       
 testloop(N) ->
@@ -355,6 +360,12 @@ nif_stub_error(Line) ->
 %% (Note: NIFnized)
 
 get_lib_refc() ->
+     ?nif_stub.
+
+uniform_s_list(_Size, _State) ->
+     ?nif_stub.
+
+uniform_s_list(_Size, _Max, _State) ->
      ?nif_stub.
 
 %% On-load callback
