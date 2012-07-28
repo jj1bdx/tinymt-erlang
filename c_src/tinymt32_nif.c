@@ -88,6 +88,8 @@ static ERL_NIF_TERM tinymt32_nif_temper(ErlNifEnv *env, int argc, const ERL_NIF_
 static ERL_NIF_TERM tinymt32_nif_temper_float(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
 static ERL_NIF_TERM tinymt32_nif_uniform_s_1(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
 static ERL_NIF_TERM tinymt32_nif_uniform_s_2(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
+static ERL_NIF_TERM tinymt32_nif_uniform_s_1_list(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
+static ERL_NIF_TERM tinymt32_nif_uniform_s_2_list(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
 
 inline static void tinymt32_next_state(tinymt32_t *random, tinymt32_t *random2);
 inline static uint32_t tinymt32_temper(tinymt32_t *random);
@@ -102,7 +104,9 @@ static ErlNifFunc nif_funcs[] = {
     {"temper", 1, tinymt32_nif_temper},
     {"temper_float", 1, tinymt32_nif_temper_float},
     {"uniform_s", 1, tinymt32_nif_uniform_s_1},
-    {"uniform_s", 2, tinymt32_nif_uniform_s_2}
+    {"uniform_s", 2, tinymt32_nif_uniform_s_2},
+    {"uniform_s_list", 1, tinymt32_nif_uniform_s_1_list},
+    {"uniform_s_list", 2, tinymt32_nif_uniform_s_2_list}
 };
 
 /* Function call macro to initialize NIF. */
