@@ -122,6 +122,8 @@ static ERL_NIF_TERM atom_error2;
 static ERL_NIF_TERM atom_error3;
 /** An Erlang atom container. */
 static ERL_NIF_TERM atom_ok;
+/** An Erlang atom container. */
+static ERL_NIF_TERM atom_error_tinymt_nomem;
 
 /**
  * Checks the version number of the load info from Erlang.
@@ -157,6 +159,7 @@ static int load(ErlNifEnv *env, void **priv_data, ERL_NIF_TERM load_info)
     atom_error2 = enif_make_atom(env,"error2");
     atom_error3 = enif_make_atom(env,"error3");
     atom_ok = enif_make_atom(env,"ok");
+    atom_error_tinymt_nomem = enif_make_atom(env,"error_tinymt_nomem");
 
     *priv_data = NULL;
 
@@ -427,6 +430,145 @@ tinymt32_nif_uniform_s_2(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
     return enif_make_tuple2(env,
 			    enif_make_uint(env,
 					   (v % max) + 1),
+			    enif_make_tuple8(env,
+					     elements[0],
+					     enif_make_uint(env, new.status[0]),
+					     enif_make_uint(env, new.status[1]),
+					     enif_make_uint(env, new.status[2]),
+					     enif_make_uint(env, new.status[3]),
+					     enif_make_uint(env, new.mat1),
+					     enif_make_uint(env, new.mat2),
+					     enif_make_uint(env, new.tmat)));
+}
+
+static ERL_NIF_TERM
+tinymt32_nif_uniform_s_1_list(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
+{ /* (uint32(), #intstate32{} */
+  /* size of list, internal state (8 element tuple) */
+    tinymt32_t old, new;
+    uint32_t listsize;
+    int arity, i;
+    const ERL_NIF_TERM *elements;
+    ERL_NIF_TERM *terms;
+    ERL_NIF_TERM list;
+
+    if (!enif_get_uint(env, argv[0], &listsize)
+        || listsize == 0) {
+        return enif_make_badarg(env);
+    }
+
+    if (!enif_get_tuple(env, argv[1], &arity, &elements)
+        || arity != 8 ) {
+	return enif_make_badarg(env);
+    }
+
+    if (!enif_is_atom(env, elements[0])
+	|| !enif_get_uint(env, elements[1], &old.status[0])
+	|| !enif_get_uint(env, elements[2], &old.status[1])
+	|| !enif_get_uint(env, elements[3], &old.status[2])
+	|| !enif_get_uint(env, elements[4], &old.status[3])
+	|| !enif_get_uint(env, elements[5], &old.mat1)
+	|| !enif_get_uint(env, elements[6], &old.mat2)
+	|| !enif_get_uint(env, elements[7], &old.tmat)) {
+	return enif_make_badarg(env);
+    }
+
+    /* list terms */
+    terms = (ERL_NIF_TERM *) enif_alloc(listsize * sizeof(ERL_NIF_TERM *));
+    if (NULL == terms) {
+	return atom_error_tinymt_nomem;
+    }
+
+    for (i = 0; i < listsize; i++) {
+	new.mat1 = old.mat1;
+	new.mat2 = old.mat2;
+	new.tmat = old.tmat;
+	tinymt32_next_state(&old, &new);
+	terms[i] = enif_make_double(env,
+				    tinymt32_temper(&new) * TINYMT32_MUL);
+    }	
+
+    list = enif_make_list_from_array(env, terms, listsize);
+
+    /* freeing objects already converted into another ERL_NIF_TERM */
+    enif_free(terms);
+
+    return enif_make_tuple2(env,
+			    list,
+			    enif_make_tuple8(env,
+					     elements[0],
+					     enif_make_uint(env, new.status[0]),
+					     enif_make_uint(env, new.status[1]),
+					     enif_make_uint(env, new.status[2]),
+					     enif_make_uint(env, new.status[3]),
+					     enif_make_uint(env, new.mat1),
+					     enif_make_uint(env, new.mat2),
+					     enif_make_uint(env, new.tmat)));
+
+}
+
+static ERL_NIF_TERM
+tinymt32_nif_uniform_s_2_list(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
+{ /* (uint32(), uint32(), #intstate32{}) */
+  /* list size, max val, 8-element tuple */
+    tinymt32_t old, new;
+    int arity, i;
+    const ERL_NIF_TERM *elements;
+    uint32_t limit, max, v;
+    uint32_t listsize;
+    ERL_NIF_TERM *terms;
+    ERL_NIF_TERM list;
+
+    if (!enif_get_uint(env, argv[0], &listsize)
+        || listsize == 0) {
+        return enif_make_badarg(env);
+    }
+
+    if (!enif_get_uint(env, argv[1], &max)
+        || max < 1 ) {
+	return enif_make_badarg(env);
+    }
+
+    if (!enif_get_tuple(env, argv[2], &arity, &elements)
+        || arity != 8 ) {
+	return enif_make_badarg(env);
+    }
+
+    if (!enif_is_atom(env, elements[0])
+	|| !enif_get_uint(env, elements[1], &new.status[0])
+	|| !enif_get_uint(env, elements[2], &new.status[1])
+	|| !enif_get_uint(env, elements[3], &new.status[2])
+	|| !enif_get_uint(env, elements[4], &new.status[3])
+	|| !enif_get_uint(env, elements[5], &new.mat1)
+	|| !enif_get_uint(env, elements[6], &new.mat2)
+	|| !enif_get_uint(env, elements[7], &new.tmat)) {
+	return enif_make_badarg(env);
+    }
+
+    /* list terms */
+    terms = (ERL_NIF_TERM *) enif_alloc(listsize * sizeof(ERL_NIF_TERM *));
+    if (NULL == terms) {
+	return atom_error_tinymt_nomem;
+    }
+
+    limit = (uint32_t) (TWOPOW32 - (TWOPOW32 % (long long) max));
+
+    for (i = 0; i < listsize; i++) {
+	do {
+	    old = new;    
+	    tinymt32_next_state(&old, &new);
+	    v = tinymt32_temper(&new);
+	} while ((v >= limit) && (limit > 0));
+	terms[i] = enif_make_uint(env, (v % max) + 1);
+    }
+
+    list = enif_make_list_from_array(env, terms, listsize);
+
+    /* freeing objects already converted into another ERL_NIF_TERM */
+    enif_free(terms);
+
+    return enif_make_tuple2(env,
+			    list,
 			    enif_make_tuple8(env,
 					     elements[0],
 					     enif_make_uint(env, new.status[0]),
