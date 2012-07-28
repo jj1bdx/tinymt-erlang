@@ -1,6 +1,6 @@
 # tinymt-erlang: Tiny Mersenne Twister (TinyMT) for Erlang
 
-* Release date: 11-JUL-2012
+* Release date: 29-JUL-2012
 * Edited and written by Kenji Rikitake (Kyoto University)
 * Email contact: <kenji.rikitake@acm.org>
 
@@ -24,7 +24,8 @@ by Mutsuo Saito (Hiroshima University) and Makoto Matsumoto (The University of T
 
 ## Features
 
-* Minimal NIF version added as `tinymt32_nif`.
+* Minimal NIF functions added as `tinymt32_nif`.
+* List output version of `uniform_s` as `uniform_s_list/{2,3}`
 
 ## Notes
 
@@ -33,7 +34,7 @@ by Mutsuo Saito (Hiroshima University) and Makoto Matsumoto (The University of T
   which exceeded the limit of 2^32.  This has been fixed by the
   corresponding 32-bit value.
 
-* `tinymt32_nif.erl` and `tinymt32_nif_tests.erl` will cause compilation errors
+* `tinymt32_nif.el` and `tinymt32_nif_tests.erl` will cause compilation errors
   when building with HiPE options in `rebar.config`; move the source files
   out of the `src/` directory when testing HiPE.
 
@@ -91,6 +92,7 @@ which will be automatically fetched under the directory `support/`.
 
 * Dave "dizzyd" Smith
 * Tuncer Ayaz
+* Ryosuke "Voluntas" Nakai
 
 ## Acknowledgments
 
