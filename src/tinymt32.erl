@@ -48,6 +48,8 @@
 	 uniform/1,
 	 uniform_s/1,
 	 uniform_s/2,
+	 uniform_s_list/2,
+	 uniform_s_list/3,
 	 testloop/1]).
 
 -include("tinymt32.hrl").
@@ -321,6 +323,34 @@ uniform(N) when is_integer(N), N >= 1 ->
     {V, R1} = uniform_s(N, R),
     put(tinymt32_seed, R1),
     V.
+
+-spec uniform_s_list_2_loop(pos_integer(), #intstate32{}, list(float())) -> 
+				   {list(float()), #intstate32{}}.
+
+uniform_s_list_2_loop(0, S, List) ->
+    {lists:reverse(List), S};
+uniform_s_list_2_loop(Len, S, List) ->
+    {V, S2} = uniform_s(S),
+    uniform_s_list_2_loop(Len - 1, S2, [V | List]).
+
+-spec uniform_s_list(pos_integer(), #intstate32{}) -> {list(float()), #intstate32{}}.
+
+uniform_s_list(Len, S) ->
+    uniform_s_list_2_loop(Len, S, []).
+
+-spec uniform_s_list_3_loop(pos_integer(), pos_integer(), #intstate32{}, list(float())) -> 
+				   {list(float()), #intstate32{}}.
+
+uniform_s_list_3_loop(0, _Max, S, List) ->
+    {lists:reverse(List), S};
+uniform_s_list_3_loop(Len, Max, S, List) ->
+    {V, S2} = uniform_s(Max, S),
+    uniform_s_list_3_loop(Len - 1, Max, S2, [V | List]).
+
+-spec uniform_s_list(pos_integer(), pos_integer(), #intstate32{}) -> {list(pos_integer()), #intstate32{}}.
+
+uniform_s_list(Len, Max, S) ->
+    uniform_s_list_3_loop(Len, Max, S, []).
 
 -spec testloop(pos_integer()) -> list().
 		       
