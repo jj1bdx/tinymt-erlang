@@ -422,7 +422,7 @@ tinymt32_nif_uniform_s_2(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
     limit = (uint32_t) (TWOPOW32 - (TWOPOW32 % (long long) max));
 
     do {
-	old = new;    
+	old = new;
 	tinymt32_next_state(&old, &new);
 	v = tinymt32_temper(&new);
     } while ((v >= limit) && (limit > 0));
@@ -479,13 +479,15 @@ tinymt32_nif_uniform_s_2_list(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[
 	return atom_error_tinymt_nomem;
     }
 
+    new.mat1 = old.mat1;
+    new.mat2 = old.mat2;
+    new.tmat = old.tmat;
+
     for (i = 0; i < listsize; i++) {
-	new.mat1 = old.mat1;
-	new.mat2 = old.mat2;
-	new.tmat = old.tmat;
 	tinymt32_next_state(&old, &new);
 	terms[i] = enif_make_double(env,
 				    tinymt32_temper(&new) * TINYMT32_MUL);
+	old = new;
     }	
 
     list = enif_make_list_from_array(env, terms, listsize);
