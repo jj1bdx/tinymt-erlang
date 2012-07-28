@@ -125,12 +125,27 @@ test_speed_tinymt_nif_uniform_nothing(P, Q) ->
     {_, T} = statistics(runtime),
     T.
 
+test_speed_tinymt_nif_uniform_n_list_rec1(Acc, 0, _, _) ->
+    _ = lists:reverse(Acc),
+    ok;
+test_speed_tinymt_nif_uniform_n_list_rec1(Acc, X, Q, I) ->
+    {F, I2} = tinymt32_nif:uniform_s_list(Q, 10000, I),
+    test_speed_tinymt_nif_uniform_n_list_rec1([F|Acc], X - 1, Q, I2).
+
+test_speed_tinymt_nif_uniform_n_list(P, Q) ->
+    _ = statistics(runtime),
+    I = tinymt32_nif:seed(),
+    ok = test_speed_tinymt_nif_uniform_n_list_rec1([], P, Q, I),
+    {_, T} = statistics(runtime),
+    T.
+
 test_speed() ->
-    io:format("{orig_uniform, orig_uniform_n, tinymt_nif_uniform, tinymt_nif_uniform_n, tinymt_nif_uniform_nothing}~n~p~n",
+    io:format("{orig_uniform, orig_uniform_n, tinymt_nif_uniform, tinymt_nif_uniform_n, tinymt_nif_uniform_n_list, tinymt_nif_uniform_nothing}~n~p~n",
               [{test_speed_orig_uniform(100, 10000),
                 test_speed_orig_uniform_n(100, 10000),
                 test_speed_tinymt_nif_uniform(100, 10000),
                 test_speed_tinymt_nif_uniform_n(100, 10000),
+                test_speed_tinymt_nif_uniform_n_list(100, 10000),
                 test_speed_tinymt_nif_uniform_nothing(100, 10000)}
               ]).
 
