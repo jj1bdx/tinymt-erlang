@@ -54,6 +54,16 @@
 
 #include <inttypes.h>
 
+#if defined(__GNUC__)
+    #define inline __inline__
+#endif
+
+#if defined(__GNUC__)
+#define ALWAYSINLINE __attribute__((always_inline))
+#else
+#define ALWAYSINLINE
+#endif
+
 #define TINYMT32_MEXP 127
 #define TINYMT32_SH0 1
 #define TINYMT32_SH1 10
@@ -83,13 +93,13 @@ static int upgrade(ErlNifEnv* env, void** priv_data, void** old_priv_data, ERL_N
 static void unload(ErlNifEnv* env, void* priv_data);
 
 static ERL_NIF_TERM tinymt32_nif_get_lib_refc(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
-static ERL_NIF_TERM tinymt32_nif_next_state(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
-static ERL_NIF_TERM tinymt32_nif_temper(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
-static ERL_NIF_TERM tinymt32_nif_temper_float(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
-static ERL_NIF_TERM tinymt32_nif_uniform_s_1(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
-static ERL_NIF_TERM tinymt32_nif_uniform_s_2(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
-static ERL_NIF_TERM tinymt32_nif_uniform_s_list_2(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
-static ERL_NIF_TERM tinymt32_nif_uniform_s_list_3(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
+inline static ERL_NIF_TERM tinymt32_nif_next_state(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
+inline static ERL_NIF_TERM tinymt32_nif_temper(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
+inline static ERL_NIF_TERM tinymt32_nif_temper_float(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
+inline static ERL_NIF_TERM tinymt32_nif_uniform_s_1(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
+inline static ERL_NIF_TERM tinymt32_nif_uniform_s_2(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
+inline static ERL_NIF_TERM tinymt32_nif_uniform_s_list_2(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
+inline static ERL_NIF_TERM tinymt32_nif_uniform_s_list_3(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]);
 
 inline static void tinymt32_next_state(tinymt32_t *random, tinymt32_t *random2);
 inline static uint32_t tinymt32_temper(tinymt32_t *random);
@@ -244,7 +254,7 @@ static void unload(ErlNifEnv* env, void* priv_data)
     /*else NIF library still used by other (new) module code */
 }
 
-static ERL_NIF_TERM
+inline static ERL_NIF_TERM
 tinymt32_nif_next_state(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 { /* (#intstate32{}, 8 element tuple) */
     tinymt32_t old, new;
@@ -284,7 +294,7 @@ tinymt32_nif_next_state(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
 }
 
-static ERL_NIF_TERM
+inline static ERL_NIF_TERM
 tinymt32_nif_temper(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 { /* (#intstate32{}, 8 element tuple) */
     tinymt32_t state;
@@ -314,7 +324,7 @@ tinymt32_nif_temper(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
 }
 
-static ERL_NIF_TERM
+inline static ERL_NIF_TERM
 tinymt32_nif_temper_float(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 { /* (#intstate32{}, 8 element tuple) */
     tinymt32_t state;
@@ -344,7 +354,7 @@ tinymt32_nif_temper_float(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
 }
 
-static ERL_NIF_TERM
+inline static ERL_NIF_TERM
 tinymt32_nif_uniform_s_1(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 { /* (#intstate32{}, 8 element tuple) */
     tinymt32_t old, new;
@@ -390,7 +400,7 @@ tinymt32_nif_uniform_s_1(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
 #define TWOPOW32 (0x100000000LL)
 
-static ERL_NIF_TERM
+inline static ERL_NIF_TERM
 tinymt32_nif_uniform_s_2(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 { /* (uint32(), #intstate32{}) */
     tinymt32_t old, new;
@@ -441,7 +451,7 @@ tinymt32_nif_uniform_s_2(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 					     enif_make_uint(env, new.tmat)));
 }
 
-static ERL_NIF_TERM
+inline static ERL_NIF_TERM
 tinymt32_nif_uniform_s_list_2(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 { /* (uint32(), #intstate32{} */
   /* size of list, internal state (8 element tuple) */
@@ -509,7 +519,7 @@ tinymt32_nif_uniform_s_list_2(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[
 
 }
 
-static ERL_NIF_TERM
+inline static ERL_NIF_TERM
 tinymt32_nif_uniform_s_list_3(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 { /* (uint32(), uint32(), #intstate32{}) */
   /* list size, max val, 8-element tuple */
