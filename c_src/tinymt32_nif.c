@@ -473,13 +473,13 @@ tinymt32_nif_uniform_s_list_2(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[
     }
 
     if (!enif_is_atom(env, elements[0])
-	|| !enif_get_uint(env, elements[1], &old.status[0])
-	|| !enif_get_uint(env, elements[2], &old.status[1])
-	|| !enif_get_uint(env, elements[3], &old.status[2])
-	|| !enif_get_uint(env, elements[4], &old.status[3])
-	|| !enif_get_uint(env, elements[5], &old.mat1)
-	|| !enif_get_uint(env, elements[6], &old.mat2)
-	|| !enif_get_uint(env, elements[7], &old.tmat)) {
+	|| !enif_get_uint(env, elements[1], &new.status[0])
+	|| !enif_get_uint(env, elements[2], &new.status[1])
+	|| !enif_get_uint(env, elements[3], &new.status[2])
+	|| !enif_get_uint(env, elements[4], &new.status[3])
+	|| !enif_get_uint(env, elements[5], &new.mat1)
+	|| !enif_get_uint(env, elements[6], &new.mat2)
+	|| !enif_get_uint(env, elements[7], &new.tmat)) {
 	return enif_make_badarg(env);
     }
 
@@ -489,15 +489,11 @@ tinymt32_nif_uniform_s_list_2(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[
 	return atom_error_tinymt_nomem;
     }
 
-    new.mat1 = old.mat1;
-    new.mat2 = old.mat2;
-    new.tmat = old.tmat;
-
     for (i = 0; i < listsize; i++) {
+	old = new;
 	tinymt32_next_state(&old, &new);
 	terms[i] = enif_make_double(env,
 				    tinymt32_temper(&new) * TINYMT32_MUL);
-	old = new;
     }	
 
     list = enif_make_list_from_array(env, terms, listsize);
