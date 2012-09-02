@@ -1,6 +1,6 @@
 # tinymt-erlang: Tiny Mersenne Twister (TinyMT) for Erlang
 
-* Release date: 28-JUL-2012
+* Release date: 2-SEP-2012
 * Edited and written by Kenji Rikitake (Kyoto University)
 * Email contact: <kenji.rikitake@acm.org>
 
@@ -25,7 +25,7 @@ by Mutsuo Saito (Hiroshima University) and Makoto Matsumoto (The University of T
 ## Features
 
 * Minimal NIF functions added as `tinymt32_nif`.
-* List output version of `uniform_s` as `uniform_s_list/{2,3}`
+* List output version of `uniform_s` as `uniform_s_list/{2,3}` added to NIFs.
 
 ## Notes
 
@@ -54,6 +54,11 @@ by Mutsuo Saito (Hiroshima University) and Makoto Matsumoto (The University of T
   presumably function calls and memory allocation themselves than the
   computational work for TinyMT internal state recursion.
 
+* The list generation NIF functions `uniform_n_list/{2,3}` is about
+  six to seven times faster than non-list NIFs on wall clock, and
+  by `fprof` they are about 13 times faster.  Use these functions
+  for generating a long (length >= 100) list of random numbers.
+
 ## Tested platforms
 
 * FreeBSD/amd64 9.0-STABLE with Erlang/OTP R15B01
@@ -79,6 +84,8 @@ which will be automatically fetched under the directory `support/`.
 
 ## TODO
 
+* Splitting NIFs from the main module
+    * List-generation functions only?
 * More documentation and code
 * More evaluation and refactoring
 
