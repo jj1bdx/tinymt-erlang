@@ -260,7 +260,7 @@ seed() ->
 		    mat1 = _M1, mat2 = _M2, tmat = _TM} = R -> R
     end.
 
--spec seed_put(#intstate32{}) -> #intstate32{}.
+-spec seed_put(#intstate32{}) -> 'undefined' | #intstate32{}.
 
 seed_put(R) ->
     put(tinymt32_seed, R).
@@ -324,7 +324,7 @@ uniform(N) when is_integer(N), N >= 1 ->
     put(tinymt32_seed, R1),
     V.
 
--spec uniform_s_list_2_loop(pos_integer(), #intstate32{}, list(float())) -> 
+-spec uniform_s_list_2_loop(non_neg_integer(), #intstate32{}, list(float())) -> 
 				   {list(float()), #intstate32{}}.
 
 uniform_s_list_2_loop(0, S, List) ->
@@ -338,8 +338,8 @@ uniform_s_list_2_loop(Len, S, List) ->
 uniform_s_list(Len, S) ->
     uniform_s_list_2_loop(Len, S, []).
 
--spec uniform_s_list_3_loop(pos_integer(), pos_integer(), #intstate32{}, list(float())) -> 
-				   {list(float()), #intstate32{}}.
+-spec uniform_s_list_3_loop(non_neg_integer(), pos_integer(), #intstate32{}, list(pos_integer())) -> 
+				   {list(pos_integer()), #intstate32{}}.
 
 uniform_s_list_3_loop(0, _Max, S, List) ->
     {lists:reverse(List), S};
