@@ -264,7 +264,7 @@ seed() ->
 		    mat1 = _M1, mat2 = _M2, tmat = _TM} = R -> R
     end.
 
--spec seed_put(#intstate32{}) -> #intstate32{}.
+-spec seed_put(#intstate32{}) -> 'undefined' | #intstate32{}.
 
 seed_put(R) ->
     put(tinymt32_seed, R).
