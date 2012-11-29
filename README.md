@@ -61,8 +61,8 @@ by Mutsuo Saito (Hiroshima University) and Makoto Matsumoto (The University of T
 
 ## Tested platforms
 
-* FreeBSD/amd64 9.0-STABLE with Erlang/OTP R15B01
-* FreeBSD/i386 8.3-RELEASE with Erlang/OTP R15B01
+* FreeBSD/amd64 9-STABLE with Erlang/OTP R15B03
+* FreeBSD/i386 8-STABLE with Erlang/OTP R15B03
 * Windows 7 64bit with Erlang/OTP R15B01 (no rebar support)
 * Ubuntu Linux 12.04 with Erlang/OTP R15B01
 * RedHat Enterprise Linux 6 with Erlang/OTP R15B01
