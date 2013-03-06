@@ -41,16 +41,16 @@ by Mutsuo Saito (Hiroshima University) and Makoto Matsumoto (The University of T
 ## On execution speed
 
 * The HiPE version is about two to three times faster than non-HiPE-non-NIF
-  version, measured in overall execution time, on x86_64/amd64
+  version, measured in overall execution time, on x86\_64/amd64
   architectures. (see `test-scripts/testspeed.escript`) If you need a
   fast execution, compile with the HiPE option. (see `rebar.config`)
 
 * The non-HiPE-non-NIF version is about six times slower than `random` module
-  on x86_64/amd64, measured by `fprof`.  This is presumably due to increased
+  on x86\_64/amd64, measured by `fprof`.  This is presumably due to increased
   computational complexity of the algorithm.
 
 * The NIF version is about six times faster than non-HiPE-non-NIF
-  version on x86_64/amd64, measured by `fprof`.  The bottleneck is
+  version on x86\_64/amd64, measured by `fprof`.  The bottleneck is
   presumably function calls and memory allocation themselves than the
   computational work for TinyMT internal state recursion.
 
@@ -63,6 +63,7 @@ by Mutsuo Saito (Hiroshima University) and Makoto Matsumoto (The University of T
 
 * FreeBSD/amd64 9-STABLE with Erlang/OTP R16B
 * FreeBSD/i386 8-STABLE with Erlang/OTP R15B03
+* Ubuntu Linux 12.10 with Erlang/OTP R16B
 * Windows 7 64bit with Erlang/OTP R15B01 (no rebar support)
 * Ubuntu Linux 12.04 with Erlang/OTP R15B01
 * RedHat Enterprise Linux 6 with Erlang/OTP R15B01
