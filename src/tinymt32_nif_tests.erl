@@ -39,6 +39,11 @@
 
 -include("tinymt32.hrl").
 
+%% From random module
+-type ran() :: {integer(), integer(), integer()}.
+
+-spec test_speed_tinymt_nif_uniform_rec1([uint32()], non_neg_integer(), non_neg_integer(), pos_integer(), #intstate32{}) -> 'ok'.
+
 test_speed_tinymt_nif_uniform_rec1(Acc, 0, _, _, _) ->
     _ = lists:reverse(Acc),
     ok;
@@ -49,12 +54,16 @@ test_speed_tinymt_nif_uniform_rec1(Acc, X, Q, R, I) ->
     {F, I2} = tinymt32_nif:uniform_s(I),
     test_speed_tinymt_nif_uniform_rec1([F|Acc], X, Q - 1, R, I2).
 
+-spec test_speed_tinymt_nif_uniform(non_neg_integer(), non_neg_integer()) -> non_neg_integer().
+
 test_speed_tinymt_nif_uniform(P, Q) ->
     _ = statistics(runtime),
     I = tinymt32_nif:seed(),
     ok = test_speed_tinymt_nif_uniform_rec1([], P, Q, Q, I),
     {_, T} = statistics(runtime),
     T.
+
+-spec test_speed_orig_uniform_n_rec1([integer()], non_neg_integer(), non_neg_integer(), pos_integer(), ran()) -> 'ok'.
 
 test_speed_orig_uniform_n_rec1(Acc, 0, _, _, _) ->
     _ = lists:reverse(Acc),
@@ -66,12 +75,16 @@ test_speed_orig_uniform_n_rec1(Acc, X, Q, R, I) ->
     {F, I2} = random:uniform_s(10000, I),
     test_speed_orig_uniform_n_rec1([F|Acc], X, Q - 1, R, I2).
 
+-spec test_speed_orig_uniform_n(non_neg_integer(), non_neg_integer()) -> non_neg_integer().
+
 test_speed_orig_uniform_n(P, Q) ->
     _ = statistics(runtime),
     I = random:seed(),
     ok = test_speed_orig_uniform_n_rec1([], P, Q, Q, I),
     {_, T} = statistics(runtime),
     T.
+
+-spec test_speed_tinymt_nif_uniform_n_rec1([uint32()], non_neg_integer(), non_neg_integer(), pos_integer(), #intstate32{}) -> 'ok'.
 
 test_speed_tinymt_nif_uniform_n_rec1(Acc, 0, _, _, _) ->
     _ = lists:reverse(Acc),
@@ -83,6 +96,8 @@ test_speed_tinymt_nif_uniform_n_rec1(Acc, X, Q, R, I) ->
     {F, I2} = tinymt32_nif:uniform_s(10000, I),
     test_speed_tinymt_nif_uniform_n_rec1([F|Acc], X, Q - 1, R, I2).
 
+-spec test_speed_tinymt_nif_uniform_n(non_neg_integer(), non_neg_integer()) -> non_neg_integer().
+
 test_speed_tinymt_nif_uniform_n(P, Q) ->
     _ = statistics(runtime),
     I = tinymt32_nif:seed(),
@@ -90,15 +105,19 @@ test_speed_tinymt_nif_uniform_n(P, Q) ->
     {_, T} = statistics(runtime),
     T.
 
+-spec test_speed_orig_uniform_rec1([float()], non_neg_integer(), non_neg_integer(), pos_integer(), ran()) -> 'ok'.
+
 test_speed_orig_uniform_rec1(Acc, 0, _, _, _) ->
     _ = lists:reverse(Acc),
     ok;
 test_speed_orig_uniform_rec1(Acc, X, 0, R, I) ->
     _ = lists:reverse(Acc),
-    test_speed_orig_uniform_n_rec1([], X - 1, R, R, I);
+    test_speed_orig_uniform_rec1([], X - 1, R, R, I);
 test_speed_orig_uniform_rec1(Acc, X, Q, R, I) ->
     {F, I2} = random:uniform_s(I),
-    test_speed_orig_uniform_n_rec1([F|Acc], X, Q - 1, R, I2).
+    test_speed_orig_uniform_rec1([F|Acc], X, Q - 1, R, I2).
+
+-spec test_speed_orig_uniform(non_neg_integer(), non_neg_integer()) -> non_neg_integer().
 
 test_speed_orig_uniform(P, Q) ->
     _ = statistics(runtime),
@@ -106,6 +125,8 @@ test_speed_orig_uniform(P, Q) ->
     ok = test_speed_orig_uniform_rec1([], P, Q, Q, I),
     {_, T} = statistics(runtime),
     T.
+
+-spec test_speed_tinymt_nif_uniform_nothing_rec1([uint32()], non_neg_integer(), non_neg_integer(), pos_integer(), #intstate32{}) -> 'ok'.
 
 test_speed_tinymt_nif_uniform_nothing_rec1(Acc, 0, _, _, _) ->
     _ = lists:reverse(Acc),
@@ -118,12 +139,16 @@ test_speed_tinymt_nif_uniform_nothing_rec1(Acc, X, Q, R, I) ->
     I2 = I,
     test_speed_tinymt_nif_uniform_nothing_rec1([F|Acc], X, Q - 1, R, I2).
 
+-spec test_speed_tinymt_nif_uniform_nothing(non_neg_integer(), non_neg_integer()) -> non_neg_integer().
+
 test_speed_tinymt_nif_uniform_nothing(P, Q) ->
     _ = statistics(runtime),
     I = tinymt32_nif:seed(),
     ok = test_speed_tinymt_nif_uniform_nothing_rec1([], P, Q, Q, I),
     {_, T} = statistics(runtime),
     T.
+
+-spec test_speed_tinymt_nif_uniform_n_list_rec1([uint32()], non_neg_integer(), pos_integer(), #intstate32{}) -> 'ok'.
 
 test_speed_tinymt_nif_uniform_n_list_rec1(Acc, 0, _, _) ->
     _ = lists:reverse(Acc),
@@ -132,12 +157,16 @@ test_speed_tinymt_nif_uniform_n_list_rec1(Acc, X, Q, I) ->
     {F, I2} = tinymt32_nif:uniform_s_list(Q, 10000, I),
     test_speed_tinymt_nif_uniform_n_list_rec1([F|Acc], X - 1, Q, I2).
 
+-spec test_speed_tinymt_nif_uniform_n_list(non_neg_integer(), non_neg_integer()) -> non_neg_integer().
+
 test_speed_tinymt_nif_uniform_n_list(P, Q) ->
     _ = statistics(runtime),
     I = tinymt32_nif:seed(),
     ok = test_speed_tinymt_nif_uniform_n_list_rec1([], P, Q, I),
     {_, T} = statistics(runtime),
     T.
+
+-spec test_speed() -> 'ok'.
 
 test_speed() ->
     io:format("{orig_uniform, orig_uniform_n, tinymt_nif_uniform, tinymt_nif_uniform_n, tinymt_nif_uniform_n_list, tinymt_nif_uniform_nothing}~n~p~n",
