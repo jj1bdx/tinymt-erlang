@@ -29,6 +29,13 @@ by Mutsuo Saito (Hiroshima University) and Makoto Matsumoto (The University of T
 
 ## Notes
 
+* *Test bug*: In versions released previously before 13-JAN-2014,
+  `test_speed_orig_uniform_rec1/5` in `tinymt32_tests` and `tinymt32_nif_tests`
+  errorneously called `test_speed_orig_uniform_n_rec1/5` (note `_n_`).
+  This bug would have been affected the evaluation result of the Erlang Workshop 2012 paper.
+  The re-measured loop test execution time of `random:uniform_s/1` is approx. 70 to 80 percent of
+  that of `random:uniform_s/2`.  This bug was found with the dialyzer program of R16B03.
+
 * In versions released previously before 31-MAY-2012 (inclusive),
   `seed0/0` had a wrong value in the `#status2` member of the record
   which exceeded the limit of 2^32.  This has been fixed by the
