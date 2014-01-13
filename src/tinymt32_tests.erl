@@ -63,7 +63,7 @@ test_speed_tinymt_uniform(P, Q) ->
     {_, T} = statistics(runtime),
     T.
 
--spec test_speed_orig_uniform_n_rec1([uint32()], non_neg_integer(), non_neg_integer(), pos_integer(), ran()) -> 'ok'.
+-spec test_speed_orig_uniform_n_rec1([integer()], non_neg_integer(), non_neg_integer(), pos_integer(), ran()) -> 'ok'.
 
 test_speed_orig_uniform_n_rec1(Acc, 0, _, _, _) ->
     _ = lists:reverse(Acc),
@@ -105,17 +105,17 @@ test_speed_tinymt_uniform_n(P, Q) ->
     {_, T} = statistics(runtime),
     T.
 
--spec test_speed_orig_uniform_rec1([uint32()], non_neg_integer(), non_neg_integer(), pos_integer(), ran()) -> 'ok'.
+-spec test_speed_orig_uniform_rec1([float()], non_neg_integer(), non_neg_integer(), pos_integer(), ran()) -> 'ok'.
 
 test_speed_orig_uniform_rec1(Acc, 0, _, _, _) ->
     _ = lists:reverse(Acc),
     ok;
 test_speed_orig_uniform_rec1(Acc, X, 0, R, I) ->
     _ = lists:reverse(Acc),
-    test_speed_orig_uniform_n_rec1([], X - 1, R, R, I);
+    test_speed_orig_uniform_rec1([], X - 1, R, R, I);
 test_speed_orig_uniform_rec1(Acc, X, Q, R, I) ->
     {F, I2} = random:uniform_s(I),
-    test_speed_orig_uniform_n_rec1([F|Acc], X, Q - 1, R, I2).
+    test_speed_orig_uniform_rec1([F|Acc], X, Q - 1, R, I2).
 
 -spec test_speed_orig_uniform(non_neg_integer(), non_neg_integer()) -> non_neg_integer().
 
