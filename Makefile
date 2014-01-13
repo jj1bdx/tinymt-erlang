@@ -15,3 +15,5 @@ doc:
 eunit:
 	$(REBAR) eunit
 
+speed:
+	escript test-scripts/testspeed.escript
