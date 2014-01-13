@@ -1,7 +1,7 @@
 # tinymt-erlang: Tiny Mersenne Twister (TinyMT) for Erlang
 
-* Release date: 10-SEP-2012
-* Edited and written by Kenji Rikitake (Kyoto University)
+* Release date: 10-SEP-2012 (Last modified: 13-JAN-2014)
+* Edited and written by Kenji Rikitake (k2r.org, formerly Kyoto University)
 * Email contact: <kenji.rikitake@acm.org>
 
 Copyright (c) 2012 Kenji Rikitake and Kyoto University. All rights
@@ -60,6 +60,10 @@ by Mutsuo Saito (Hiroshima University) and Makoto Matsumoto (The University of T
   for generating a long (length >= 100) list of random numbers.
 
 ## Tested platforms
+
+* FreeBSD/amd64 10-STABLE with Erlang/OTP R16B03
+
+## Past tested platforms
 
 * FreeBSD/amd64 9-STABLE with Erlang/OTP R16B
 * FreeBSD/i386 8-STABLE with Erlang/OTP R15B03
