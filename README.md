@@ -62,6 +62,7 @@ by Mutsuo Saito (Hiroshima University) and Makoto Matsumoto (The University of T
 ## Tested platforms
 
 * FreeBSD/amd64 10-STABLE with Erlang/OTP R16B03
+* OS X 10.9.1 with Erlang/OTP R16B03
 
 ## Past tested platforms
 
