@@ -1,10 +1,10 @@
 # tinymt-erlang: Tiny Mersenne Twister (TinyMT) for Erlang
 
-* Release date: 10-SEP-2012 (Last modified: 13-JAN-2014)
+* Release date: 10-SEP-2012 (README ast modified: 3-FEB-2014)
 * Edited and written by Kenji Rikitake (k2r.org, formerly Kyoto University)
 * Email contact: <kenji.rikitake@acm.org>
 
-Copyright (c) 2012 Kenji Rikitake and Kyoto University. All rights
+Copyright (c) 2012-2014 Kenji Rikitake and Kyoto University. All rights
 reserved.
 
 Copyright (c) 2011-2012 Mutsuo Saito, Makoto Matsumoto, Hiroshima
@@ -68,8 +68,8 @@ by Mutsuo Saito (Hiroshima University) and Makoto Matsumoto (The University of T
 
 ## Tested platforms
 
-* FreeBSD/amd64 10-STABLE with Erlang/OTP R16B03
-* OS X 10.9.1 with Erlang/OTP R16B03
+* FreeBSD/amd64 10-STABLE with Erlang/OTP R16B03-1 and 17.0-rc1
+* OS X 10.9.1 with Erlang/OTP R16B03-1 and 17.0-rc1
 
 ## Past tested platforms
 
