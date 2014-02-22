@@ -10,7 +10,7 @@ reserved.
 Copyright (c) 2011-2012 Mutsuo Saito, Makoto Matsumoto, Hiroshima
 University, and the University of Tokyo. All rights reserved.
 
-See LICENSE.txt for the license (new/simplified BSD license). (Note:
+See the file `LICENSE` for the license (new/simplified BSD license). (Note:
 license of rebar is Apache 2.0 License.)
 
 This software is based on
