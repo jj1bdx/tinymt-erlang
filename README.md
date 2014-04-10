@@ -27,6 +27,7 @@ by Mutsuo Saito (Hiroshima University) and Makoto Matsumoto (The University of T
 * Old NIF-supported version tagged as `20140409`
 * NIF support removed
 * `rebar.config` now uses HiPE as default
+* Type specs updated for 17.0 (notably `array()` to `array:array()`)
 
 ## Notes
 
