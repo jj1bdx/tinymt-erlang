@@ -22,11 +22,11 @@ by Mutsuo Saito (Hiroshima University) and Makoto Matsumoto (The University of T
 * See <http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/TINYMT/index.html>
 * Also see <https://github.com/jj1bdx/TinyMT/> for my fork of the reference code
 
-## Note: no NIF support, use HiPE as default
+## Note: no NIF support, HiPE can be enabled
 
 * Old NIF-supported version tagged as `20140409`
 * NIF support removed
-* `rebar.config` now uses HiPE as default
+* `rebar.config` has HiPE option commented out
 * Type specs updated for 17.0 (notably `array()` to `array:array()`)
 
 ## Notes
