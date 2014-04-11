@@ -118,7 +118,7 @@ ini_func1(X) ->
 ini_func2(X) ->
     ((X bxor (X bsr 27)) * 1566083941) band ?TINYMT32_UINT32.
 
--spec init_rec1(integer(), integer(), array:array()) -> array:array().
+-spec init_rec1(integer(), integer(), array:array(uint32())) -> array:array(uint32()).
 
 init_rec1(I, N, ST) when I =:= N ->
     ST;
@@ -152,8 +152,8 @@ init(R, S) ->
 					   status2 = V2, status3 = V3}),
     init_rec2(0, ?PRE_LOOP, R1).
 
--spec init_by_list32_rec1(integer(), integer(), [uint32()], array:array()) ->
-				 {integer(), array:array()}.
+-spec init_by_list32_rec1(integer(), integer(), [uint32()], array:array(uint32())) ->
+    {integer(), array:array(uint32())}.
 
 init_by_list32_rec1(0, I, _, ST) ->
     {I, ST};
@@ -187,7 +187,7 @@ init_by_list32_rec1(K, I, Key, ST) ->
     I2 = (I + 1) rem ?SIZE,
     init_by_list32_rec1(K - 1, I2, T, ST4).
 
--spec init_by_list32_rec2(integer(), integer(), array:array()) -> array:array().
+-spec init_by_list32_rec2(integer(), integer(), array:array(uint32())) -> array:array(uint32()).
 
 init_by_list32_rec2(0, _, ST) ->
     ST;
