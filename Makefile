@@ -17,3 +17,9 @@ eunit:
 
 speed:
 	escript test-scripts/testspeed.escript
+
+dialyzer:
+	        dialyzer src/*.erl
+
+firsttime-dialyzer:
+	        dialyzer --build_plt --apps kernel stdlib erts mnesia eunit crypto
