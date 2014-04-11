@@ -42,7 +42,7 @@
 %% From random module
 -type ran() :: {integer(), integer(), integer()}.
 
--spec test_speed_tinymt_uniform_rec1([uint32()], non_neg_integer(), non_neg_integer(), pos_integer(), #intstate32{}) -> 'ok'.
+-spec test_speed_tinymt_uniform_rec1([float()], non_neg_integer(), non_neg_integer(), pos_integer(), #intstate32{}) -> 'ok'.
 
 test_speed_tinymt_uniform_rec1(Acc, 0, _, _, _) ->
     _ = lists:reverse(Acc),
