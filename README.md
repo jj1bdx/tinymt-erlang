@@ -1,6 +1,6 @@
 # tinymt-erlang: Tiny Mersenne Twister (TinyMT) for Erlang
 
-* Release date: 10-APR-2014
+* Release date: 12-APR-2014
 * Edited and written by Kenji Rikitake (k2r.org, formerly Kyoto University)
 * Email contact: <kenji.rikitake@acm.org>
 
@@ -26,7 +26,7 @@ by Mutsuo Saito (Hiroshima University) and Makoto Matsumoto (The University of T
 
 * Old NIF-supported version tagged as `20140409`
 * NIF support removed
-* `rebar.config` has HiPE option commented out
+* HiPE configuration auto-detected in `rebar.config.script`
 * Type specs updated for 17.0 (notably `array()` to `array:array()`)
 
 ## Notes
@@ -57,7 +57,7 @@ by Mutsuo Saito (Hiroshima University) and Makoto Matsumoto (The University of T
 ## Tested platforms
 
 * FreeBSD/amd64 10-STABLE with Erlang/OTP 17.0
-* OS X 10.9.1 with Erlang/OTP 17.0
+* OS X 10.9.2 with Erlang/OTP 17.0
 
 ## Building 
 
