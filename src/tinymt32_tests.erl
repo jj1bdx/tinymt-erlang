@@ -142,9 +142,20 @@ test_speed() ->
 
 -include_lib("eunit/include/eunit.hrl").
 
+-spec testloop(pos_integer()) -> list().
+
+testloop(N) ->
+    R = tinymt32:seed0(),
+    testloop(N, R, []).
+
+testloop(0, _, L) ->
+    lists:reverse(L);
+testloop(N, R, L) ->
+    R1 = tinymt32:next_state(R),
+    testloop(N - 1, R1, [tinymt32:temper(R1)|L]).
 testloop_test() ->
     Refval = test_refval(),
-    Testval = tinymt32:testloop(length(Refval)),
+    Testval = testloop(length(Refval)),
     ?assertEqual(Refval, Testval).
 
 %% @doc simple testing function as used in EUnit
