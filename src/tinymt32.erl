@@ -36,21 +36,20 @@
 -module(tinymt32).
 
 -export([init/2,
-	 init_by_list32/2,
-	 next_state/1,
-	 seed0/0,
-	 seed/0,
-	 seed/1,
-	 seed/3,
-	 temper/1,
-	 temper_float/1,
-	 uniform/0,
-	 uniform/1,
-	 uniform_s/1,
-	 uniform_s/2,
-	 uniform_s_list/2,
-	 uniform_s_list/3,
-	 testloop/1]).
+     init_by_list32/2,
+     next_state/1,
+     seed0/0,
+     seed/0,
+     seed/1,
+     seed/3,
+     temper/1,
+     temper_float/1,
+     uniform/0,
+     uniform/1,
+     uniform_s/1,
+     uniform_s/2,
+     uniform_s_list/2,
+     uniform_s_list/3]).
 
 -include("tinymt32.hrl").
 
@@ -67,7 +66,7 @@
 next_state(R) ->
     Y0 = R#intstate32.status3,
     X0 = (R#intstate32.status0 band ?TINYMT32_MASK)
-	bxor R#intstate32.status1 bxor R#intstate32.status2,
+    bxor R#intstate32.status1 bxor R#intstate32.status2,
     X1 = (X0 bxor (X0 bsl ?TINYMT32_SH0)) band ?TINYMT32_UINT32,
     Y1 = Y0 bxor (Y0 bsr ?TINYMT32_SH0) bxor X1,
     S0 = R#intstate32.status1,
@@ -84,7 +83,7 @@ next_state(R) ->
 temper(R) ->
     T0 = R#intstate32.status3,
     T1 = (R#intstate32.status0 + (R#intstate32.status2 bsr ?TINYMT32_SH8))
-	band ?TINYMT32_UINT32,
+    band ?TINYMT32_UINT32,
     T2 = T0 bxor T1,
     T1M = (-(T1 band 1)) band ?TINYMT32_UINT32,
     T2 bxor (R#intstate32.tmat band T1M).
@@ -99,13 +98,13 @@ temper_float(R) ->
 
 %% if the lower 127bits of the seed is all zero, reinitialize
 period_certification(#intstate32{status0 = 0, status1 = 0, status2 = 0, status3 = 0,
-				mat1 = M1, mat2 = M2, tmat = TM}) ->
+                mat1 = M1, mat2 = M2, tmat = TM}) ->
     #intstate32{status0 = $T, status1 = $I, status2 = $N, status3 = $Y,
-	        mat1 = M1, mat2 = M2, tmat = TM};
+            mat1 = M1, mat2 = M2, tmat = TM};
 period_certification(#intstate32{status0 = 16#80000000, status1 = 0, status2 = 0, status3 = 0,
-				mat1 = M1, mat2 = M2, tmat = TM}) ->
+                mat1 = M1, mat2 = M2, tmat = TM}) ->
     #intstate32{status0 = $T, status1 = $I, status2 = $N, status3 = $Y,
-	        mat1 = M1, mat2 = M2, tmat = TM};
+            mat1 = M1, mat2 = M2, tmat = TM};
 period_certification(_R) -> _R.
 
 -spec ini_func1(uint32()) -> uint32().
@@ -125,9 +124,9 @@ init_rec1(I, N, ST) when I =:= N ->
 init_rec1(I, N, ST) when I < N ->
     V1 = array:get((I - 1) band 3, ST),
     ST1 = array:set(I band 3,
-		    (array:get(I band 3, ST) bxor
-			 (I + (1812433253 * (V1 bxor (V1 bsr 30))))
-			 band ?TINYMT32_UINT32), ST),
+            (array:get(I band 3, ST) bxor
+             (I + (1812433253 * (V1 bxor (V1 bsr 30))))
+             band ?TINYMT32_UINT32), ST),
     init_rec1(I + 1, N, ST1).
 
 -spec init_rec2(integer(), integer(), #intstate32{}) -> #intstate32{}.
@@ -149,7 +148,7 @@ init(R, S) ->
     ST4 = init_rec1(1, ?MIN_LOOP, ST3),
     [V0, V1, V2, V3] = array:to_list(ST4),
     R1 = period_certification(R#intstate32{status0 = V0, status1 = V1,
-					   status2 = V2, status3 = V3}),
+                       status2 = V2, status3 = V3}),
     init_rec2(0, ?PRE_LOOP, R1).
 
 -spec init_by_list32_rec1(integer(), integer(), [uint32()], array:array(uint32())) ->
@@ -228,7 +227,7 @@ init_by_list32(R, K) ->
                   array:get(?MID rem ?SIZE, ST3) bxor
                   array:get((?SIZE - 1) rem ?SIZE, ST3)),
     ST4 = array:set(?MID rem ?SIZE,
-		    (array:get(?MID rem ?SIZE, ST3) + RR1) band ?TINYMT32_UINT32,
+            (array:get(?MID rem ?SIZE, ST3) + RR1) band ?TINYMT32_UINT32,
                     ST3),
     RR2 = (RR1 + KL) band ?TINYMT32_UINT32,
     ST5 = array:set((?MID + ?LAG) rem ?SIZE,
@@ -240,24 +239,24 @@ init_by_list32(R, K) ->
     ST8 = init_by_list32_rec2(?SIZE, I1, ST7),
     [V0, V1, V2, V3] = array:to_list(ST8),
     R1 = period_certification(R#intstate32{status0 = V0, status1 = V1,
-					   status2 = V2, status3 = V3}),
+                       status2 = V2, status3 = V3}),
     init_rec2(0, ?PRE_LOOP, R1).
 
 -spec seed0() -> #intstate32{}.
-		   
+
 seed0() ->
     #intstate32{status0 = 297425621, status1 = 2108342699,
-		  status2 = 4290625991, status3 = 2232209075,
-		  mat1 = 2406486510, mat2 = 4235788063, tmat = 932445695}.
+          status2 = 4290625991, status3 = 2232209075,
+          mat1 = 2406486510, mat2 = 4235788063, tmat = 932445695}.
 
 -spec seed() -> #intstate32{}.
-		 
+
 seed() ->
     case seed_put(seed0()) of
         undefined -> seed0();
-	#intstate32{status0 = _S0, status1 = _S1,
-		    status2 = _S2, status3 = _S3,
-		    mat1 = _M1, mat2 = _M2, tmat = _TM} = R -> R
+    #intstate32{status0 = _S0, status1 = _S1,
+            status2 = _S2, status3 = _S3,
+            mat1 = _M1, mat2 = _M2, tmat = _TM} = R -> R
     end.
 
 -spec seed_put(#intstate32{}) -> 'undefined' | #intstate32{}.
@@ -274,9 +273,9 @@ seed({A1, A2, A3}) ->
 
 seed(A1, A2, A3) ->
     seed_put(init_by_list32(seed0(),
-			    [A1 band ?TINYMT32_UINT32,
-			     A2 band ?TINYMT32_UINT32,
-			     A3 band ?TINYMT32_UINT32])).
+                [A1 band ?TINYMT32_UINT32,
+                 A2 band ?TINYMT32_UINT32,
+                 A3 band ?TINYMT32_UINT32])).
 
 -spec uniform_s(#intstate32{}) -> {float(), #intstate32{}}.
 
@@ -290,9 +289,9 @@ uniform_s(R0) ->
 %% 0.0 <= value < 1.0
 uniform() ->
     R = case get(tinymt32_seed) of
-	    undefined -> seed0();
-	    _R -> _R
-	end,
+        undefined -> seed0();
+        _R -> _R
+    end,
     {V, R2} = uniform_s(R),
     put(tinymt32_seed, R2),
     V.
@@ -308,8 +307,8 @@ uniform_s(M, L, R) ->
     R1 = next_state(R),
     V = temper(R1),
     case V < L of
-	true -> {(V rem M) + 1, R1};
-	false -> uniform_s(M, L, R1)
+    true -> {(V rem M) + 1, R1};
+    false -> uniform_s(M, L, R1)
     end.
 
 %% 1 <= value <= N
@@ -317,15 +316,15 @@ uniform_s(M, L, R) ->
 
 uniform(N) when is_integer(N), N >= 1 ->
     R = case get(tinymt32_seed) of
-	    undefined -> seed0();
-	    _R -> _R
-	end,
+        undefined -> seed0();
+        _R -> _R
+    end,
     {V, R1} = uniform_s(N, R),
     put(tinymt32_seed, R1),
     V.
 
 -spec uniform_s_list_2_loop(non_neg_integer(), #intstate32{}, list(float())) -> 
-				   {list(float()), #intstate32{}}.
+                   {list(float()), #intstate32{}}.
 
 uniform_s_list_2_loop(0, S, List) ->
     {lists:reverse(List), S};
@@ -339,7 +338,7 @@ uniform_s_list(Len, S) ->
     uniform_s_list_2_loop(Len, S, []).
 
 -spec uniform_s_list_3_loop(non_neg_integer(), pos_integer(), #intstate32{}, list(pos_integer())) -> 
-				   {list(pos_integer()), #intstate32{}}.
+                   {list(pos_integer()), #intstate32{}}.
 
 uniform_s_list_3_loop(0, _Max, S, List) ->
     {lists:reverse(List), S};
@@ -352,14 +351,3 @@ uniform_s_list_3_loop(Len, Max, S, List) ->
 uniform_s_list(Len, Max, S) ->
     uniform_s_list_3_loop(Len, Max, S, []).
 
--spec testloop(pos_integer()) -> list().
-		       
-testloop(N) ->
-    R = seed0(),
-    testloop(N, R, []).
-
-testloop(0, _, L) ->
-    lists:reverse(L);
-testloop(N, R, L) ->
-    R1 = next_state(R),
-    testloop(N - 1, R1, [temper(R1)|L]).
