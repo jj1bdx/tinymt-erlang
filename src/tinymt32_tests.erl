@@ -37,12 +37,11 @@
 
 -export([test_speed/0]).
 
--include("tinymt32.hrl").
-
 %% From random module
 -type ran() :: {integer(), integer(), integer()}.
 
--spec test_speed_tinymt_uniform_rec1([float()], non_neg_integer(), non_neg_integer(), pos_integer(), #intstate32{}) -> 'ok'.
+-spec test_speed_tinymt_uniform_rec1([float()], non_neg_integer(), non_neg_integer(),
+    pos_integer(), tinymt32:intstate32()) -> 'ok'.
 
 test_speed_tinymt_uniform_rec1(Acc, 0, _, _, _) ->
     _ = lists:reverse(Acc),
@@ -84,7 +83,7 @@ test_speed_orig_uniform_n(P, Q) ->
     {_, T} = statistics(runtime),
     T.
 
--spec test_speed_tinymt_uniform_n_rec1([uint32()], non_neg_integer(), non_neg_integer(), pos_integer(), #intstate32{}) -> 'ok'.
+-spec test_speed_tinymt_uniform_n_rec1([non_neg_integer()], non_neg_integer(), non_neg_integer(), pos_integer(), tinymt32:intstate32()) -> 'ok'.
 
 test_speed_tinymt_uniform_n_rec1(Acc, 0, _, _, _) ->
     _ = lists:reverse(Acc),
