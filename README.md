@@ -24,7 +24,7 @@ by Mutsuo Saito (Hiroshima University) and Makoto Matsumoto (The University of T
 
 ## Note: include file removed
 
-* Old include file can be found in version tagged as `20140412`
+* Old include file can be found in version tagged as `20140409`
 * The internal state now have opaque type `tinymt32:intstate32/0`
 
 ## Note: no NIF support, HiPE can be enabled
