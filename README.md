@@ -1,6 +1,6 @@
 # tinymt-erlang: Tiny Mersenne Twister (TinyMT) for Erlang
 
-* Release date: 12-APR-2014
+* Release date: 21-APR-2014
 * Edited and written by Kenji Rikitake (k2r.org, formerly Kyoto University)
 * Email contact: <kenji.rikitake@acm.org>
 
@@ -21,6 +21,11 @@ by Mutsuo Saito (Hiroshima University) and Makoto Matsumoto (The University of T
 
 * See <http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/TINYMT/index.html>
 * Also see <https://github.com/jj1bdx/TinyMT/> for my fork of the reference code
+
+## Note: include file removed
+
+* Old include file can be found in version tagged as `20140412`
+* The internal state now have opaque type `tinymt32:intstate32/0`
 
 ## Note: no NIF support, HiPE can be enabled
 
