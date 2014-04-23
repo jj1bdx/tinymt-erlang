@@ -1,6 +1,6 @@
 # tinymt-erlang: Tiny Mersenne Twister (TinyMT) for Erlang
 
-* Release date: 21-APR-2014
+* Release date: 23-APR-2014
 * Edited and written by Kenji Rikitake (k2r.org, formerly Kyoto University)
 * Email contact: <kenji.rikitake@acm.org>
 
@@ -21,6 +21,11 @@ by Mutsuo Saito (Hiroshima University) and Makoto Matsumoto (The University of T
 
 * See <http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/TINYMT/index.html>
 * Also see <https://github.com/jj1bdx/TinyMT/> for my fork of the reference code
+
+## Note: edoc added, removed list-generating functions
+
+* tinymt32:uniform_s_list/{2,3} are removed
+* EDoc comment added: do `make doc` for generating the documentation
 
 ## Note: include file removed
 
