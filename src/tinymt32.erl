@@ -1,3 +1,8 @@
+%% @author Kenji Rikitake <kenji.rikitake@acm.org>
+%% @author Mutsuo Saito
+%% @author Makoto Matsumoto
+%% @copyright 2012-2014 Kenji Rikitake, Mutsuo Saito, Makoto Matsumoto, Kyoto University, Hiroshima University, The University of Tokyo
+%% @end
 %% (This is a simplified BSD license.)
 %%
 %% Copyright (c) 2012 Kenji Rikitake and Kyoto University. All rights
@@ -80,6 +85,8 @@
 -define(MID, 1).
 -define(SIZE, 4).
 
+%% @doc Advance TinyMT state one step
+
 -spec next_state(intstate32()) -> intstate32().
 
 next_state(R) ->
@@ -97,6 +104,8 @@ next_state(R) ->
     S2 = S20 bxor (R#intstate32.mat2 band Y1M),
     R#intstate32{status0 = S0, status1 = S1, status2 = S2, status3 = S3}.
 
+%% @doc Generate 32bit unsigned integer from the TinyMT internal state
+
 -spec temper(intstate32()) -> uint32().
 
 temper(R) ->
@@ -107,7 +116,8 @@ temper(R) ->
     T1M = (-(T1 band 1)) band ?TINYMT32_UINT32,
     T2 bxor (R#intstate32.tmat band T1M).
 
-%% 0.0 <= result < 1.0
+%% @doc Generate 32bit-resolution float from the TinyMT internal state
+%% (Note: 0.0 =&lt; result &lt; 1.0)
 -spec temper_float(intstate32()) -> float().
 
 temper_float(R) ->
@@ -115,7 +125,9 @@ temper_float(R) ->
 
 -spec period_certification(intstate32()) -> intstate32().
 
+%% @doc Certify TinyMT internal state for proper seeding:
 %% if the lower 127bits of the seed is all zero, reinitialize
+
 period_certification(#intstate32{status0 = 0, status1 = 0, status2 = 0, status3 = 0,
                 mat1 = M1, mat2 = M2, tmat = TM}) ->
     #intstate32{status0 = $T, status1 = $I, status2 = $N, status3 = $Y,
@@ -224,7 +236,7 @@ init_by_list32_rec2(K, I, ST) ->
     I2 = (I + 1) rem ?SIZE,
     init_by_list32_rec2(K - 1, I2, ST4).
 
-%% @doc generates an internal state from a list of 32-bit integers
+%% @doc Generate a TinyMT internal state from a list of 32-bit integers
 
 -spec init_by_list32(intstate32(), [uint32()]) -> intstate32().
 
@@ -261,12 +273,18 @@ init_by_list32(R, K) ->
                        status2 = V2, status3 = V3}),
     init_rec2(0, ?PRE_LOOP, R1).
 
+%% @doc Set the default seed value to TinyMT state in the process directory
+%% (Compatible with random:seed0/0)
+
 -spec seed0() -> intstate32().
 
 seed0() ->
     #intstate32{status0 = 297425621, status1 = 2108342699,
           status2 = 4290625991, status3 = 2232209075,
           mat1 = 2406486510, mat2 = 4235788063, tmat = 932445695}.
+
+%% @doc Set the default seed value to TinyMT state in the process directory
+%% (Compatible with random:seed/1)
 
 -spec seed() -> intstate32().
 
@@ -278,15 +296,25 @@ seed() ->
             mat1 = _M1, mat2 = _M2, tmat = _TM} = R -> R
     end.
 
+%% @doc Put the seed into the process dictionary
+
 -spec seed_put(intstate32()) -> 'undefined' | intstate32().
 
 seed_put(R) ->
     put(tinymt32_seed, R).
 
+%% @doc Set the seed value to TinyMT state in the process directory
+%% with the given three-element tuple of unsigned 32-bit integers
+%% (Compatible with random:seed/1)
+
 -spec seed({integer(), integer(), integer()}) -> 'undefined' | intstate32().
 
 seed({A1, A2, A3}) ->
     seed(A1, A2, A3).
+
+%% @doc Set the seed value to TinyMT state in the process directory
+%% with the given three unsigned 32-bit integer arguments
+%% (Compatible with random:seed/3)
 
 -spec seed(integer(), integer(), integer()) -> 'undefined' | intstate32().
 
@@ -296,16 +324,23 @@ seed(A1, A2, A3) ->
                  A2 band ?TINYMT32_UINT32,
                  A3 band ?TINYMT32_UINT32])).
 
+%% @doc Generate 32bit-resolution float from the given TinyMT internal state
+%% (Note: 0.0 =&lt; result &lt; 1.0)
+%% (Compatible with random:uniform_s/1)
+
 -spec uniform_s(intstate32()) -> {float(), intstate32()}.
 
-%% 0.0 <= value < 1.0
 uniform_s(R0) ->
     R1 = next_state(R0),
     {temper_float(R1), R1}.
 
 -spec uniform() -> float().
 
-%% 0.0 <= value < 1.0
+%% @doc Generate 32bit-resolution float from the TinyMT internal state
+%% in the process dictionary
+%% (Note: 0.0 =&lt; result &lt; 1.0)
+%% (Compatible with random:uniform/1)
+
 uniform() ->
     R = case get(tinymt32_seed) of
         undefined -> seed0();
@@ -315,7 +350,8 @@ uniform() ->
     put(tinymt32_seed, R2),
     V.
 
-%% 0 <= result < MAX (integer)
+%% @doc Generate 32bit-resolution float from the given TinyMT internal state
+%% (Note: 0 =&lt; result &lt; MAX (given positive integer))
 -spec uniform_s(pos_integer(), intstate32()) -> {pos_integer(), intstate32()}.
 
 uniform_s(Max, R) when is_integer(Max), Max >= 1 ->
@@ -330,7 +366,11 @@ uniform_s(M, L, R) ->
     false -> uniform_s(M, L, R1)
     end.
 
-%% 1 <= value <= N
+%% @doc Generate 32bit-resolution float from the given TinyMT internal state
+%% in the process dictionary
+%% (Note: 1 =&lt; result =&lt; N (given positive integer))
+%% (compatible with random:uniform/1)
+
 -spec uniform(pos_integer()) -> pos_integer().
 
 uniform(N) when is_integer(N), N >= 1 ->
