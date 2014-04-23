@@ -2,6 +2,7 @@
 %% @author Mutsuo Saito
 %% @author Makoto Matsumoto
 %% @copyright 2012-2014 Kenji Rikitake, Mutsuo Saito, Makoto Matsumoto, Kyoto University, Hiroshima University, The University of Tokyo
+%% @doc TinyMT 32-bit pseudo random generator module in pure Erlang
 %% @end
 %% (This is a simplified BSD license.)
 %%
@@ -52,11 +53,11 @@
      uniform/0,
      uniform/1,
      uniform_s/1,
-     uniform_s/2,
-     uniform_s_list/2,
-     uniform_s_list/3]).
+     uniform_s/2]).
 
 -export_type([intstate32/0]).
+
+%% @type uint32(). 32bit unsigned integer type.
 
 -type uint32() :: 0..16#ffffffff.
 
@@ -68,6 +69,10 @@
 	 mat1 :: uint32(),
 	 mat2 :: uint32(),
 	 tmat :: uint32()}).
+
+%% @type intstate32(). Internal state data type for TinyMT.
+%% Internally represented as the record <code>#intstate32{}</code>,
+%% including the 127bit seed and 96bit polynomial data.
 
 -opaque intstate32() :: #intstate32{}.
 
@@ -85,7 +90,9 @@
 -define(MID, 1).
 -define(SIZE, 4).
 
-%% @doc Advance TinyMT state one step
+%% @doc Advance TinyMT state for one step.
+%% Note: running temper function is required
+%% to obtain the actual random number.
 
 -spec next_state(intstate32()) -> intstate32().
 
@@ -104,7 +111,7 @@ next_state(R) ->
     S2 = S20 bxor (R#intstate32.mat2 band Y1M),
     R#intstate32{status0 = S0, status1 = S1, status2 = S2, status3 = S3}.
 
-%% @doc Generate 32bit unsigned integer from the TinyMT internal state
+%% @doc Generate 32bit unsigned integer from the TinyMT internal state.
 
 -spec temper(intstate32()) -> uint32().
 
@@ -116,7 +123,7 @@ temper(R) ->
     T1M = (-(T1 band 1)) band ?TINYMT32_UINT32,
     T2 bxor (R#intstate32.tmat band T1M).
 
-%% @doc Generate 32bit-resolution float from the TinyMT internal state
+%% @doc Generate 32bit-resolution float from the TinyMT internal state.
 %% (Note: 0.0 =&lt; result &lt; 1.0)
 -spec temper_float(intstate32()) -> float().
 
@@ -126,7 +133,7 @@ temper_float(R) ->
 -spec period_certification(intstate32()) -> intstate32().
 
 %% @doc Certify TinyMT internal state for proper seeding:
-%% if the lower 127bits of the seed is all zero, reinitialize
+%% if the lower 127bits of the seed is all zero, reinitialize.
 
 period_certification(#intstate32{status0 = 0, status1 = 0, status2 = 0, status3 = 0,
                 mat1 = M1, mat2 = M2, tmat = TM}) ->
@@ -167,6 +174,9 @@ init_rec2(I, N, R) when I =:= N ->
 init_rec2(I, N, R) when I < N ->
     R1 = next_state(R),
     init_rec2(I + 1, N, R1).
+
+%% @doc Initialize default polynomial for TinyMT
+%% and returns the internal state.
 
 -spec init(intstate32(), uint32()) -> intstate32().
 
@@ -236,7 +246,7 @@ init_by_list32_rec2(K, I, ST) ->
     I2 = (I + 1) rem ?SIZE,
     init_by_list32_rec2(K - 1, I2, ST4).
 
-%% @doc Generate a TinyMT internal state from a list of 32-bit integers
+%% @doc Generate a TinyMT internal state from a list of 32-bit integers.
 
 -spec init_by_list32(intstate32(), [uint32()]) -> intstate32().
 
@@ -274,7 +284,7 @@ init_by_list32(R, K) ->
     init_rec2(0, ?PRE_LOOP, R1).
 
 %% @doc Set the default seed value to TinyMT state in the process directory
-%% (Compatible with random:seed0/0)
+%% (Compatible with random:seed0/0).
 
 -spec seed0() -> intstate32().
 
@@ -284,7 +294,7 @@ seed0() ->
           mat1 = 2406486510, mat2 = 4235788063, tmat = 932445695}.
 
 %% @doc Set the default seed value to TinyMT state in the process directory
-%% (Compatible with random:seed/1)
+%% (Compatible with random:seed/1).
 
 -spec seed() -> intstate32().
 
@@ -296,16 +306,16 @@ seed() ->
             mat1 = _M1, mat2 = _M2, tmat = _TM} = R -> R
     end.
 
-%% @doc Put the seed into the process dictionary
+%% @doc Put the seed, or internal state, into the process dictionary.
 
 -spec seed_put(intstate32()) -> 'undefined' | intstate32().
 
 seed_put(R) ->
     put(tinymt32_seed, R).
 
-%% @doc Set the seed value to TinyMT state in the process directory
+%% @doc Set the seed value to TinyMT state in the process directory.
 %% with the given three-element tuple of unsigned 32-bit integers
-%% (Compatible with random:seed/1)
+%% (Compatible with random:seed/1).
 
 -spec seed({integer(), integer(), integer()}) -> 'undefined' | intstate32().
 
@@ -314,7 +324,7 @@ seed({A1, A2, A3}) ->
 
 %% @doc Set the seed value to TinyMT state in the process directory
 %% with the given three unsigned 32-bit integer arguments
-%% (Compatible with random:seed/3)
+%% (Compatible with random:seed/3).
 
 -spec seed(integer(), integer(), integer()) -> 'undefined' | intstate32().
 
@@ -324,7 +334,7 @@ seed(A1, A2, A3) ->
                  A2 band ?TINYMT32_UINT32,
                  A3 band ?TINYMT32_UINT32])).
 
-%% @doc Generate 32bit-resolution float from the given TinyMT internal state
+%% @doc Generate 32bit-resolution float from the given TinyMT internal state.
 %% (Note: 0.0 =&lt; result &lt; 1.0)
 %% (Compatible with random:uniform_s/1)
 
@@ -337,7 +347,7 @@ uniform_s(R0) ->
 -spec uniform() -> float().
 
 %% @doc Generate 32bit-resolution float from the TinyMT internal state
-%% in the process dictionary
+%% in the process dictionary.
 %% (Note: 0.0 =&lt; result &lt; 1.0)
 %% (Compatible with random:uniform/1)
 
@@ -350,7 +360,7 @@ uniform() ->
     put(tinymt32_seed, R2),
     V.
 
-%% @doc Generate 32bit-resolution float from the given TinyMT internal state
+%% @doc Generate 32bit-resolution float from the given TinyMT internal state.
 %% (Note: 0 =&lt; result &lt; MAX (given positive integer))
 -spec uniform_s(pos_integer(), intstate32()) -> {pos_integer(), intstate32()}.
 
@@ -367,7 +377,7 @@ uniform_s(M, L, R) ->
     end.
 
 %% @doc Generate 32bit-resolution float from the given TinyMT internal state
-%% in the process dictionary
+%% in the process dictionary.
 %% (Note: 1 =&lt; result =&lt; N (given positive integer))
 %% (compatible with random:uniform/1)
 
@@ -381,33 +391,3 @@ uniform(N) when is_integer(N), N >= 1 ->
     {V, R1} = uniform_s(N, R),
     put(tinymt32_seed, R1),
     V.
-
--spec uniform_s_list_2_loop(non_neg_integer(), intstate32(), list(float())) ->
-    {list(float()), intstate32()}.
-
-uniform_s_list_2_loop(0, S, List) ->
-    {lists:reverse(List), S};
-uniform_s_list_2_loop(Len, S, List) ->
-    {V, S2} = uniform_s(S),
-    uniform_s_list_2_loop(Len - 1, S2, [V | List]).
-
--spec uniform_s_list(pos_integer(), intstate32()) -> {list(float()), intstate32()}.
-
-uniform_s_list(Len, S) ->
-    uniform_s_list_2_loop(Len, S, []).
-
--spec uniform_s_list_3_loop(non_neg_integer(), pos_integer(), intstate32(), list(pos_integer())) ->
-    {list(pos_integer()), intstate32()}.
-
-uniform_s_list_3_loop(0, _Max, S, List) ->
-    {lists:reverse(List), S};
-uniform_s_list_3_loop(Len, Max, S, List) ->
-    {V, S2} = uniform_s(Max, S),
-    uniform_s_list_3_loop(Len - 1, Max, S2, [V | List]).
-
--spec uniform_s_list(pos_integer(), pos_integer(), intstate32()) ->
-    {list(pos_integer()), intstate32()}.
-
-uniform_s_list(Len, Max, S) ->
-    uniform_s_list_3_loop(Len, Max, S, []).
-
