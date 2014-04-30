@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/jj1bdx/tinymt-erlang.svg?branch=next)](https://travis-ci.org/jj1bdx/tinymt-erlang)
+
 # tinymt-erlang: Tiny Mersenne Twister (TinyMT) for Erlang
 
 * Release date: 23-APR-2014
