@@ -1,10 +1,14 @@
-[![Build Status](https://travis-ci.org/jj1bdx/tinymt-erlang.svg?branch=next)](https://travis-ci.org/jj1bdx/tinymt-erlang)
-
 # tinymt-erlang: Tiny Mersenne Twister (TinyMT) for Erlang
 
 * Release date: 23-APR-2014
 * Edited and written by Kenji Rikitake
 * Email contact: <kenji.rikitake@acm.org>
+
+## Travis CI build status for the master branch
+
+[![Build Status](https://travis-ci.org/jj1bdx/tinymt-erlang.svg?branch=master)](https://travis-ci.org/jj1bdx/tinymt-erlang)
+
+## License
 
 Copyright (c) 2012-2014 Kenji Rikitake and Kyoto University.
 All rights reserved.
@@ -15,14 +19,13 @@ University, and the University of Tokyo. All rights reserved.
 See the file `LICENSE` for the license (new/simplified BSD license). (Note:
 license of rebar is Apache 2.0 License.)
 
+## Details of TinyMT algorithm
+
 This software is based on
 Tiny Mersenne Twister (TinyMT) Version 1.0.1
 by Mutsuo Saito (Hiroshima University) and Makoto Matsumoto (The University of Tokyo).
-
-## Details of TinyMT algorithm
-
-* See <http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/TINYMT/index.html>
-* Also see <https://github.com/jj1bdx/TinyMT/> for my fork of the reference code
+See <http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/TINYMT/index.html>.
+Also see <https://github.com/jj1bdx/TinyMT/> for my fork of the reference code.
 
 ## Note: edoc added, removed list-generating functions
 
