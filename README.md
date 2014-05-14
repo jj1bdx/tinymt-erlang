@@ -27,22 +27,16 @@ by Mutsuo Saito (Hiroshima University) and Makoto Matsumoto (The University of T
 See <http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/TINYMT/index.html>.
 Also see <https://github.com/jj1bdx/TinyMT/> for my fork of the reference code.
 
-## Note: edoc added, removed list-generating functions
-
-* tinymt32:uniform_s_list/{2,3} are removed
-* EDoc comment added: do `make doc` for generating the documentation
-
-## Note: include file removed
-
-* Old include file can be found in version tagged as `20140409`
-* The internal state now have opaque type `tinymt32:intstate32/0`
-
-## Note: no NIF support, HiPE can be enabled
+## Changes from the old version
 
 * Old NIF-supported version tagged as `20140409`
+* Old include file can be found in version tagged as `20140409`
 * NIF support removed
-* HiPE configuration auto-detected in `rebar.config.script`
 * Type specs updated for 17.0 (notably `array()` to `array:array()`)
+* The internal state now have opaque type `tinymt32:intstate32/0`
+* `tinymt32:uniform_s_list/{2,3}` are removed
+* HiPE configuration auto-detected in `rebar.config.script`
+* EDoc comment added: do `make doc` for generating the documentation
 
 ## Notes
 
@@ -82,6 +76,14 @@ Also see <https://github.com/jj1bdx/TinyMT/> for my fork of the reference code.
 
 The build script is Basho's rebar at <https://github.com/basho/rebar>,
 which will be automatically fetched under the directory `support/`.
+
+## Documentation
+
+* Use BSD/GNU make and then
+
+    make doc
+
+Then open the file `doc/index.html` with a Web browser.
 
 ## Unit testing
 
