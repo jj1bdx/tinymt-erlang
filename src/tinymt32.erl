@@ -48,6 +48,8 @@
      seed/0,
      seed/1,
      seed/3,
+     setgenparams/1,
+     setgenparams/3,
      temper/1,
      temper_float/1,
      uniform/0,
@@ -333,6 +335,38 @@ seed(A1, A2, A3) ->
                 [A1 band ?TINYMT32_UINT32,
                  A2 band ?TINYMT32_UINT32,
                  A3 band ?TINYMT32_UINT32])).
+
+%% @doc Set the generation parameter values to TinyMT polynomials in the
+%% process directory, with the given three-element tuple of unsigned 32-bit
+%% integers.  Note well that the parameter values must be guaranteed by the
+%% TinyMT Dynamic Creator. <em>This function will not validate the parameters.</em>
+%% If seed is not set in the process dictionary, this function will call
+%% seed0/0 first, then set the generation parameter values.
+
+-spec setgenparams({integer(), integer(), integer()}) -> 'undefined' | intstate32().
+
+setgenparams({MAT1, MAT2, TMAT}) ->
+    setgenparams(MAT1, MAT2, TMAT).
+
+%% @doc Set the generation parameter values to TinyMT polynomials in the
+%% process directory, with the given three unsigned 32-bit integer
+%% arguments.  Note well that the parameter values must be guaranteed by
+%% the TinyMT Dynamic Creator. <em>This function will not validate the
+%% parameters.</em>
+%% If seed is not set in the process dictionary, this function will call
+%% seed0/0 first, then set the generation parameter values.
+
+-spec setgenparams(integer(), integer(), integer()) -> 'undefined' | intstate32().
+
+setgenparams(MAT1, MAT2, TMAT) ->
+    R = case get(tinymt32_seed) of
+        undefined -> seed0();
+        _R -> _R
+    end,
+    seed_put(R#intstate32{
+               mat1 = MAT1 band ?TINYMT32_UINT32,
+               mat2 = MAT2 band ?TINYMT32_UINT32,
+               tmat = TMAT band ?TINYMT32_UINT32}).
 
 %% @doc Generate 32bit-resolution float from the given TinyMT internal state.
 %% (Note: 0.0 =&lt; result &lt; 1.0)

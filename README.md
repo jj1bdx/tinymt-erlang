@@ -1,6 +1,7 @@
 # tinymt-erlang: Tiny Mersenne Twister (TinyMT) for Erlang
 
-* Release date: 23-APR-2014
+* Version: 0.1.0
+* Release date: 17-MAY-2014
 * Edited and written by Kenji Rikitake
 * Email contact: <kenji.rikitake@acm.org>
 
@@ -37,6 +38,7 @@ Also see <https://github.com/jj1bdx/TinyMT/> for my fork of the reference code.
 * `tinymt32:uniform_s_list/{2,3}` are removed
 * HiPE configuration auto-detected in `rebar.config.script`
 * EDoc comment added: do `make doc` for generating the documentation
+* New functions for changing generation parameters `tinymt32:setgenparams/{1,3}` are added
 
 ## Notes
 
@@ -67,6 +69,7 @@ Also see <https://github.com/jj1bdx/TinyMT/> for my fork of the reference code.
 
 * FreeBSD/amd64 10-STABLE with Erlang/OTP 17.0
 * OS X 10.9.2 with Erlang/OTP 17.0
+* Travis CI Ubuntu 12.04 LTS with Erlang/OTP 17.0
 
 ## Building 
 
