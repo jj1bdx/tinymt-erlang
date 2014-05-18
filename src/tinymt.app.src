@@ -1,6 +1,6 @@
 {application, tinymt, [
     {description, "TinyMT PRNG for Erlang"},
-    {vsn, "0.1.0"},
+    {vsn, "0.1.1-pre"},
     {env, []},
     {registered, []},
     {modules, [tinymt32]},
