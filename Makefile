@@ -9,6 +9,9 @@ compile:
 clean:
 	$(REBAR) clean
 
+ct:
+	$(REBAR) ct
+
 doc:
 	$(REBAR) doc
 
