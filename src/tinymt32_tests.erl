@@ -181,7 +181,7 @@ testloop2_test() ->
 simple_test_() ->
     [
      ?_assertMatch(ok, testloop_test()),
-     ?_assertMatch(ok, testloop_test())
+     ?_assertMatch(ok, testloop2_test())
     ].
 
 test_refval() ->
