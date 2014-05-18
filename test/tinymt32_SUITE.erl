@@ -33,113 +33,14 @@
 %% (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 %% OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
--module(tinymt32_tests).
-
--export([test_speed/0]).
-
-%% From random module
--type ran() :: {integer(), integer(), integer()}.
-
--spec test_speed_tinymt_uniform_rec1([float()], non_neg_integer(), non_neg_integer(),
-    pos_integer(), tinymt32:intstate32()) -> 'ok'.
-
-test_speed_tinymt_uniform_rec1(Acc, 0, _, _, _) ->
-    _ = lists:reverse(Acc),
-    ok;
-test_speed_tinymt_uniform_rec1(Acc, X, 0, R, I) ->
-    _ = lists:reverse(Acc),
-    test_speed_tinymt_uniform_rec1([], X - 1, R, R, I);
-test_speed_tinymt_uniform_rec1(Acc, X, Q, R, I) ->
-    {F, I2} = tinymt32:uniform_s(I),
-    test_speed_tinymt_uniform_rec1([F|Acc], X, Q - 1, R, I2).
-
--spec test_speed_tinymt_uniform(non_neg_integer(), non_neg_integer()) -> non_neg_integer().
-
-test_speed_tinymt_uniform(P, Q) ->
-    _ = statistics(runtime),
-    I = tinymt32:seed(),
-    ok = test_speed_tinymt_uniform_rec1([], P, Q, Q, I),
-    {_, T} = statistics(runtime),
-    T.
-
--spec test_speed_orig_uniform_n_rec1([integer()], non_neg_integer(), non_neg_integer(), pos_integer(), ran()) -> 'ok'.
-
-test_speed_orig_uniform_n_rec1(Acc, 0, _, _, _) ->
-    _ = lists:reverse(Acc),
-    ok;
-test_speed_orig_uniform_n_rec1(Acc, X, 0, R, I) ->
-    _ = lists:reverse(Acc),
-    test_speed_orig_uniform_n_rec1([], X - 1, R, R, I);
-test_speed_orig_uniform_n_rec1(Acc, X, Q, R, I) ->
-    {F, I2} = random:uniform_s(10000, I),
-    test_speed_orig_uniform_n_rec1([F|Acc], X, Q - 1, R, I2).
-
--spec test_speed_orig_uniform_n(non_neg_integer(), non_neg_integer()) -> non_neg_integer().
-
-test_speed_orig_uniform_n(P, Q) ->
-    _ = statistics(runtime),
-    I = random:seed(),
-    ok = test_speed_orig_uniform_n_rec1([], P, Q, Q, I),
-    {_, T} = statistics(runtime),
-    T.
-
--spec test_speed_tinymt_uniform_n_rec1([non_neg_integer()], non_neg_integer(), non_neg_integer(), pos_integer(), tinymt32:intstate32()) -> 'ok'.
-
-test_speed_tinymt_uniform_n_rec1(Acc, 0, _, _, _) ->
-    _ = lists:reverse(Acc),
-    ok;
-test_speed_tinymt_uniform_n_rec1(Acc, X, 0, R, I) ->
-    _ = lists:reverse(Acc),
-    test_speed_tinymt_uniform_n_rec1([], X - 1, R, R, I);
-test_speed_tinymt_uniform_n_rec1(Acc, X, Q, R, I) ->
-    {F, I2} = tinymt32:uniform_s(10000, I),
-    test_speed_tinymt_uniform_n_rec1([F|Acc], X, Q - 1, R, I2).
-
--spec test_speed_tinymt_uniform_n(non_neg_integer(), non_neg_integer()) -> non_neg_integer().
-
-test_speed_tinymt_uniform_n(P, Q) ->
-    _ = statistics(runtime),
-    I = tinymt32:seed(),
-    ok = test_speed_tinymt_uniform_n_rec1([], P, Q, Q, I),
-    {_, T} = statistics(runtime),
-    T.
-
--spec test_speed_orig_uniform_rec1([float()], non_neg_integer(), non_neg_integer(), pos_integer(), ran()) -> 'ok'.
-
-test_speed_orig_uniform_rec1(Acc, 0, _, _, _) ->
-    _ = lists:reverse(Acc),
-    ok;
-test_speed_orig_uniform_rec1(Acc, X, 0, R, I) ->
-    _ = lists:reverse(Acc),
-    test_speed_orig_uniform_rec1([], X - 1, R, R, I);
-test_speed_orig_uniform_rec1(Acc, X, Q, R, I) ->
-    {F, I2} = random:uniform_s(I),
-    test_speed_orig_uniform_rec1([F|Acc], X, Q - 1, R, I2).
-
--spec test_speed_orig_uniform(non_neg_integer(), non_neg_integer()) -> non_neg_integer().
-
-test_speed_orig_uniform(P, Q) ->
-    _ = statistics(runtime),
-    I = random:seed(),
-    ok = test_speed_orig_uniform_rec1([], P, Q, Q, I),
-    {_, T} = statistics(runtime),
-    T.
-
--spec test_speed() -> 'ok'.
-
-test_speed() ->
-    io:format("{orig_uniform, orig_uniform_n, tinymt_uniform, tinymt_uniform_n}~n~p~n",
-              [{test_speed_orig_uniform(100, 10000),
-                test_speed_orig_uniform_n(100, 10000),
-                test_speed_tinymt_uniform(100, 10000),
-                test_speed_tinymt_uniform_n(100, 10000)}
-              ]).
-
-%% EUnit test functions
-
--ifdef(TEST).
-
--include_lib("eunit/include/eunit.hrl").
+-module(tinymt32_SUITE).
+-include_lib("common_test/include/ct.hrl").
+-export([all/0]).
+-export([testloop_test/1,
+         testloop2_test/1]).
+ 
+all() ->
+    [testloop_test, testloop2_test].
 
 -spec testloop(pos_integer()) -> list().
 
@@ -153,10 +54,10 @@ testloop(N, R, L) ->
     R1 = tinymt32:next_state(R),
     testloop(N - 1, R1, [tinymt32:temper(R1)|L]).
 
-testloop_test() ->
+testloop_test(_Config) ->
     Refval = test_refval(),
     Testval = testloop(length(Refval)),
-    ?assertEqual(Refval, Testval).
+    Refval =:= Testval.
 
 -spec testloop2(pos_integer()) -> list().
 
@@ -171,18 +72,10 @@ testloop2(N, R, L) ->
     R1 = tinymt32:next_state(R),
     testloop2(N - 1, R1, [tinymt32:temper(R1)|L]).
 
-testloop2_test() ->
+testloop2_test(_Config) ->
     Refval = test2_refval(),
     Testval = testloop2(length(Refval)),
-    ?assertEqual(Refval, Testval).
-
-%% @doc simple testing function as used in EUnit
-
-simple_test_() ->
-    [
-     ?_assertMatch(ok, testloop_test()),
-     ?_assertMatch(ok, testloop2_test())
-    ].
+    Refval =:= Testval.
 
 test_refval() ->
     [
@@ -304,4 +197,3 @@ test2_refval() ->
      2396779772,3601944501,2988952794,1231622313,2895888770,1087393236,1814463467,
      1466261541,3604331833].
 
--endif. % TEST
