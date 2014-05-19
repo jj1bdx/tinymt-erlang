@@ -2,7 +2,7 @@
 # and http://stackoverflow.com/questions/11775197/how-to-execute-gmake-make-from-a-bash-script-file
 # for the GNUMAKE detection script
 # If stock `make` is GNU Make, use `make`; otherwise use `gmake`
-GNUMAKE=@`sh -c 'if make --version | grep "^GNU Make"; then echo make; else echo gmake; fi' 2>/dev/null`
+GNUMAKE=@`sh -c 'if (make --version | grep "^GNU Make" 2>&1 >/dev/null); then echo make; else echo gmake; fi'`
 
 TARGETMAKEFILE=	./Makefile.tinymt32
 
