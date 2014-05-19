@@ -4,5 +4,8 @@ CT_SUITES = tinymt32
 
 include erlang.mk
 
+ERLC_OPTS += +warning_as_errors +bin_opt_info +warn_missing_spec
+
 speed: all
+	@echo $(ERLC_OPTS)
 	escript ./test-scripts/testspeed.escript
