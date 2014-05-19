@@ -1,29 +1,8 @@
-.PHONY: compile clean ct doc
+PROJECT = tinymt
 
-GNUMAKE=@`sh -c 'if make --version | grep "^GNU Make"; then echo gmake; else echo make; fi' 2>/dev/null`
-
-REBAR=@`sh -c "PATH='$(PATH)':support which rebar\
-	||support/getrebar||echo false"`
-
-all: compile
-
-compile:
-	$(REBAR) compile
-
-clean:
-	$(REBAR) clean
-
-ct:
-	$(REBAR) ct
-
-doc:
-	$(REBAR) doc
+CT_SUITES = tinymt32
 
 speed:
-	escript test-scripts/testspeed.escript
+	escript ./test-scripts/testspeed.escript
 
-dialyzer:
-	        dialyzer src/*.erl
-
-firsttime-dialyzer:
-	        dialyzer --build_plt --apps kernel stdlib erts mnesia eunit crypto
+include erlang.mk
