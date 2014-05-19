@@ -1,7 +1,7 @@
 # tinymt-erlang: Tiny Mersenne Twister (TinyMT) for Erlang
 
 * Version: 0.1.1-pre
-* Release date: 18-MAY-2014
+* Release date: 19-MAY-2014
 * Edited and written by Kenji Rikitake
 * Email contact: <kenji.rikitake@acm.org>
 
@@ -40,6 +40,7 @@ Also see <https://github.com/jj1bdx/TinyMT/> for my fork of the reference code.
 * EDoc comment added: do `make doc` for generating the documentation
 * New functions for changing generation parameters `tinymt32:setgenparams/{1,3}` are added
 * Common Test suite added as `test/tinymt32_SUITE.erl`
+* Removed EUnit code
 
 ## Notes
 
@@ -89,11 +90,11 @@ which will be automatically fetched under the directory `support/`.
 
 Then open the file `doc/index.html` with a Web browser.
 
-## Unit testing
+## Unit testing by Common Test
 
 * Use BSD/GNU make and then
 
-    make eunit
+    make ct
 
 ## TODO
 
