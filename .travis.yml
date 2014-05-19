@@ -1,5 +1,5 @@
 language: erlang
-script: "make clean && rm -rf ./.git && make && make ct"
+script: "make clean && rm -rf ./.git && make tests"
 notifications:
   email: false
 otp_release:
