@@ -9,7 +9,7 @@ GNUMAKE=@`sh -c \
 TARGETMAKEFILE=	./Makefile.tinymt
 
 all:
-	$(GNUMAKE) -f $(TARGETMAKEFILE) $*
+	$(GNUMAKE) -f $(TARGETMAKEFILE) $@
 
 .DEFAULT:
-	$(GNUMAKE) -f $(TARGETMAKEFILE) $*
+	$(GNUMAKE) -f $(TARGETMAKEFILE) $@
