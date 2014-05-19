@@ -1,6 +1,6 @@
 # tinymt-erlang: Tiny Mersenne Twister (TinyMT) for Erlang
 
-* Version: 0.1.1-pre
+* Version: 0.2.0-pre
 * Release date: 19-MAY-2014
 * Edited and written by Kenji Rikitake
 * Email contact: <kenji.rikitake@acm.org>
@@ -78,6 +78,8 @@ Also see <https://github.com/jj1bdx/TinyMT/> for my fork of the reference code.
 * Building: `make`
 * Documentation: `make docs`
 * Testing: `make tests`
+* Execution speed benchmark: `make speed`
+* See also [erlang.mk](https://github.com/extend/erlang.mk) for the details
 
 ## TODO
 
