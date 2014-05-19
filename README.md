@@ -73,28 +73,11 @@ Also see <https://github.com/jj1bdx/TinyMT/> for my fork of the reference code.
 * OS X 10.9.2 with Erlang/OTP 17.0
 * Travis CI Ubuntu 12.04 LTS with Erlang/OTP 17.0
 
-## Building 
+## Make options (of erlang.mk)
 
-* Use BSD/GNU make and then
-
-    make
-
-The build script is Basho's rebar at <https://github.com/basho/rebar>,
-which will be automatically fetched under the directory `support/`.
-
-## Documentation
-
-* Use BSD/GNU make and then
-
-    make doc
-
-Then open the file `doc/index.html` with a Web browser.
-
-## Unit testing by Common Test
-
-* Use BSD/GNU make and then
-
-    make ct
+* Building: `make`
+* Documentation: `make docs`
+* Testing: `make tests`
 
 ## TODO
 
