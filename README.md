@@ -1,6 +1,6 @@
 # tinymt-erlang: Tiny Mersenne Twister (TinyMT) for Erlang
 
-* Version: 0.1.1-pre
+* Version: 0.2.0-pre
 * Release date: 19-MAY-2014
 * Edited and written by Kenji Rikitake
 * Email contact: <kenji.rikitake@acm.org>
@@ -36,11 +36,11 @@ Also see <https://github.com/jj1bdx/TinyMT/> for my fork of the reference code.
 * Type specs updated for 17.0 (notably `array()` to `array:array()`)
 * The internal state now have opaque type `tinymt32:intstate32/0`
 * `tinymt32:uniform_s_list/{2,3}` are removed
-* HiPE configuration auto-detected in `rebar.config.script`
 * EDoc comment added: do `make doc` for generating the documentation
 * New functions for changing generation parameters `tinymt32:setgenparams/{1,3}` are added
 * Common Test suite added as `test/tinymt32_SUITE.erl`
 * Removed EUnit code
+* HiPE options can be activatied in `Makefile.tinymt`
 
 ## Notes
 
@@ -73,28 +73,15 @@ Also see <https://github.com/jj1bdx/TinyMT/> for my fork of the reference code.
 * OS X 10.9.2 with Erlang/OTP 17.0
 * Travis CI Ubuntu 12.04 LTS with Erlang/OTP 17.0
 
-## Building 
+## Make options (of erlang.mk)
 
-* Use BSD/GNU make and then
-
-    make
-
-The build script is Basho's rebar at <https://github.com/basho/rebar>,
-which will be automatically fetched under the directory `support/`.
-
-## Documentation
-
-* Use BSD/GNU make and then
-
-    make doc
-
-Then open the file `doc/index.html` with a Web browser.
-
-## Unit testing by Common Test
-
-* Use BSD/GNU make and then
-
-    make ct
+* `Makefile` works on both BSD/GNU make
+* `Makefile.tinymt` is the real GNU make file; edit this file for modification
+* Building: `make`
+* Documentation: `make docs`
+* Testing: `make tests`
+* Execution speed benchmark: `make speed`
+* See also [erlang.mk](https://github.com/extend/erlang.mk) for the details
 
 ## TODO
 
@@ -112,6 +99,7 @@ Then open the file `doc/index.html` with a Web browser.
 * Dave "dizzyd" Smith
 * Tuncer Ayaz
 * Ryosuke "Voluntas" Nakai
+* Loïc Hoguin
 
 ## Acknowledgments
 
