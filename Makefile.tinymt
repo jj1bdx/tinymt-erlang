@@ -2,7 +2,7 @@ PROJECT = tinymt
 
 CT_SUITES = tinymt32
 
-speed:
-	escript ./test-scripts/testspeed.escript
-
 include erlang.mk
+
+speed: all
+	escript ./test-scripts/testspeed.escript
