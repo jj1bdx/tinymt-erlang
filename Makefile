@@ -1,4 +1,4 @@
-.PHONY: compile clean doc eunit
+.PHONY: compile clean ct doc
 
 REBAR=@`sh -c "PATH='$(PATH)':support which rebar\
 	||support/getrebar||echo false"`
@@ -14,9 +14,6 @@ ct:
 
 doc:
 	$(REBAR) doc
-
-eunit:
-	$(REBAR) eunit
 
 speed:
 	escript test-scripts/testspeed.escript
