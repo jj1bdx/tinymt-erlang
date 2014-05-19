@@ -1,3 +1,5 @@
+# erlang.mk Makefile for tinymt-erlang
+
 PROJECT = tinymt
 
 CT_SUITES = tinymt32
