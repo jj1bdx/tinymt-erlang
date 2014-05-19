@@ -1,7 +1,7 @@
 # tinymt-erlang: Tiny Mersenne Twister (TinyMT) for Erlang
 
 * Version: 0.1.1-pre
-* Release date: 18-MAY-2014
+* Release date: 19-MAY-2014
 * Edited and written by Kenji Rikitake
 * Email contact: <kenji.rikitake@acm.org>
 
