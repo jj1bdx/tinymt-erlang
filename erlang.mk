@@ -21,7 +21,7 @@ PROJECT ?= $(notdir $(CURDIR))
 PKG_FILE ?= $(CURDIR)/.erlang.mk.packages.v1
 export PKG_FILE
 
-PKG_FILE_URL ?= https://raw.github.com/extend/erlang.mk/master/packages.v1.tsv
+PKG_FILE_URL ?= https://raw.githubusercontent.com/extend/erlang.mk/master/packages.v1.tsv
 
 define get_pkg_file
 	wget --no-check-certificate -O $(PKG_FILE) $(PKG_FILE_URL) || rm $(PKG_FILE)
@@ -58,7 +58,7 @@ ifneq ($(wildcard $(RELX_CONFIG)),)
 RELX ?= $(CURDIR)/relx
 export RELX
 
-RELX_URL ?= https://github.com/erlware/relx/releases/download/v0.6.0/relx
+RELX_URL ?= https://github.com/erlware/relx/releases/download/v1.0.2/relx
 RELX_OPTS ?=
 RELX_OUTPUT_DIR ?= _rel
 
@@ -116,9 +116,9 @@ clean-all: clean clean-deps clean-docs
 
 app: ebin/$(PROJECT).app
 	$(eval MODULES := $(shell find ebin -type f -name \*.beam \
-		| sed 's/ebin\///;s/\.beam/,/' | sed '$$s/.$$//'))
+		| sed "s/ebin\//'/;s/\.beam/',/" | sed '$$s/.$$//'))
 	$(appsrc_verbose) cat src/$(PROJECT).app.src \
-		| sed 's/{modules,[[:space:]]*\[\]}/{modules, \[$(MODULES)\]}/' \
+		| sed "s/{modules,[[:space:]]*\[\]}/{modules, \[$(MODULES)\]}/" \
 		> ebin/$(PROJECT).app
 
 define compile_erl
