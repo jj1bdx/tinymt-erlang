@@ -19,6 +19,7 @@ ERLANG_MK_VERSION = 1
 # Core configuration.
 
 PROJECT ?= $(notdir $(CURDIR))
+PROJECT := $(strip $(PROJECT))
 
 # Verbosity.
 
@@ -156,7 +157,7 @@ pkg-search: $(PKG_FILE)
 		"Description:\t" $$6 "\n" }'
 else
 pkg-search:
-	@echo "Usage: make pkg-search q=STRING"
+	$(error Usage: make pkg-search q=STRING)
 endif
 
 distclean-pkg:
@@ -239,7 +240,7 @@ clean-app:
 # Configuration.
 
 CT_OPTS ?=
-CT_SUITES ?=
+CT_SUITES ?= $(sort $(subst _SUITE.erl,,$(shell find test -type f -name \*_SUITE.erl -exec basename {} \;)))
 
 TEST_ERLC_OPTS ?= +debug_info +warn_export_vars +warn_shadow_vars +warn_obsolete_guard
 TEST_ERLC_OPTS += -DTEST=1 -DEXTRA=1 +'{parse_transform, eunit_autoexport}'
@@ -288,7 +289,7 @@ tests-ct: clean deps app build-ct-suites
 
 define ct_suite_target
 ct-$(1): ERLC_OPTS = $(TEST_ERLC_OPTS)
-ct-$(1): clean deps app build-tests
+ct-$(1): clean deps app build-ct-suites
 	@if [ -d "test" ] ; \
 	then \
 		mkdir -p logs/ ; \
@@ -338,7 +339,7 @@ distclean-plt:
 	$(gen_verbose) rm -f $(DIALYZER_PLT)
 
 dialyze:
-	@dialyzer --no_native --src src $(DIALYZER_OPTS)
+	@dialyzer --no_native --src -r src $(DIALYZER_OPTS)
 
 # Copyright (c) 2013-2014, Loïc Hoguin <essen@ninenines.eu>
 # This file is part of erlang.mk and subject to the terms of the ISC License.
