@@ -90,10 +90,10 @@ endif
 endif
 export ERL_LIBS
 
-PKG_FILE ?= $(CURDIR)/.erlang.mk.packages.v2
-export PKG_FILE
+PKG_FILE2 ?= $(CURDIR)/.erlang.mk.packages.v2
+export PKG_FILE2
 
-PKG_FILE_URL ?= https://raw.githubusercontent.com/extend/erlang.mk/master/packages.v2.tsv
+PKG_FILE_URL ?= https://raw.githubusercontent.com/ninenines/erlang.mk/master/packages.v2.tsv
 
 # Core targets.
 
@@ -110,25 +110,31 @@ distclean:: distclean-deps distclean-pkg
 
 # Deps related targets.
 
-define dep_fetch_git
-	git clone -n -- $(2) $(DEPS_DIR)/$(1)
-	cd $(DEPS_DIR)/$(1) ; git checkout -q $(3)
-endef
-
 define dep_fetch
-	@mkdir -p $(DEPS_DIR)
-ifeq (,$(dep_$(1)))
-	@if [ ! -f $(PKG_FILE) ]; then $(call core_http_get,$(PKG_FILE),$(PKG_FILE_URL)); fi
-	$(eval DEP_FETCH_PKG := $(shell awk 'BEGIN { FS = "\t" }; $$1 == "$(1)" { print $$2 " " $$3 " "$$4 }' $(PKG_FILE)))
-	$(call dep_fetch_$(word 1,$(DEP_FETCH_PKG)),$(1),$(word 2,$(DEP_FETCH_PKG)),$(word 3,$(DEP_FETCH_PKG)))
-else
-	$(call dep_fetch_$(word 1,$(dep_$(1))),$(1),$(word 2,$(dep_$(1))),$(word 3,$(dep_$(1))))
-endif
+	if [ "$$$$VS" = "git" ]; then \
+		git clone -n -- $$$$REPO $(DEPS_DIR)/$(1); \
+		cd $(DEPS_DIR)/$(1) && git checkout -q $$$$COMMIT; \
+	else \
+		exit 78; \
+	fi
 endef
 
 define dep_target
 $(DEPS_DIR)/$(1):
+	@mkdir -p $(DEPS_DIR)
+	@if [ ! -f $(PKG_FILE2) ]; then $(call core_http_get,$(PKG_FILE2),$(PKG_FILE_URL)); fi
+ifeq (,$(dep_$(1)))
+	DEPPKG=$$$$(awk 'BEGIN { FS = "\t" }; $$$$1 == "$(1)" { print $$$$2 " " $$$$3 " " $$$$4 }' $(PKG_FILE2);) \
+	VS=$$$$(echo $$$$DEPPKG | cut -d " " -f1); \
+	REPO=$$$$(echo $$$$DEPPKG | cut -d " " -f2); \
+	COMMIT=$$$$(echo $$$$DEPPKG | cut -d " " -f3); \
 	$(call dep_fetch,$(1))
+else
+	VS=$(word 1,$(dep_$(1))); \
+	REPO=$(word 2,$(dep_$(1))); \
+	COMMIT=$(word 3,$(dep_$(1))); \
+	$(call dep_fetch,$(1))
+endif
 endef
 
 $(foreach dep,$(DEPS),$(eval $(call dep_target,$(dep))))
@@ -138,19 +144,19 @@ distclean-deps:
 
 # Packages related targets.
 
-$(PKG_FILE):
-	$(call core_http_get,$(PKG_FILE),$(PKG_FILE_URL))
+$(PKG_FILE2):
+	$(call core_http_get,$(PKG_FILE2),$(PKG_FILE_URL))
 
-pkg-list: $(PKG_FILE)
-	@cat $(PKG_FILE) | awk 'BEGIN { FS = "\t" }; { print \
+pkg-list: $(PKG_FILE2)
+	@cat $(PKG_FILE2) | awk 'BEGIN { FS = "\t" }; { print \
 		"Name:\t\t" $$1 "\n" \
 		"Repository:\t" $$3 "\n" \
 		"Website:\t" $$5 "\n" \
 		"Description:\t" $$6 "\n" }'
 
 ifdef q
-pkg-search: $(PKG_FILE)
-	@cat $(PKG_FILE) | grep -i ${q} | awk 'BEGIN { FS = "\t" }; { print \
+pkg-search: $(PKG_FILE2)
+	@cat $(PKG_FILE2) | grep -i ${q} | awk 'BEGIN { FS = "\t" }; { print \
 		"Name:\t\t" $$1 "\n" \
 		"Repository:\t" $$3 "\n" \
 		"Website:\t" $$5 "\n" \
@@ -161,7 +167,7 @@ pkg-search:
 endif
 
 distclean-pkg:
-	$(gen_verbose) rm -f $(PKG_FILE)
+	$(gen_verbose) rm -f $(PKG_FILE2)
 
 help::
 	@printf "%s\n" "" \
@@ -240,7 +246,11 @@ clean-app:
 # Configuration.
 
 CT_OPTS ?=
-CT_SUITES ?= $(sort $(subst _SUITE.erl,,$(shell find test -type f -name \*_SUITE.erl -exec basename {} \;)))
+ifneq ($(wildcard test/),)
+	CT_SUITES ?= $(sort $(subst _SUITE.erl,,$(shell find test -type f -name \*_SUITE.erl -exec basename {} \;)))
+else
+	CT_SUITES ?=
+endif
 
 TEST_ERLC_OPTS ?= +debug_info +warn_export_vars +warn_shadow_vars +warn_obsolete_guard
 TEST_ERLC_OPTS += -DTEST=1 -DEXTRA=1 +'{parse_transform, eunit_autoexport}'
@@ -344,32 +354,6 @@ dialyze:
 # Copyright (c) 2013-2014, Loïc Hoguin <essen@ninenines.eu>
 # This file is part of erlang.mk and subject to the terms of the ISC License.
 
-# Verbosity.
-
-dtl_verbose_0 = @echo " DTL   " $(filter %.dtl,$(?F));
-dtl_verbose = $(dtl_verbose_$(V))
-
-# Core targets.
-
-define compile_erlydtl
-	$(dtl_verbose) erl -noshell -pa ebin/ $(DEPS_DIR)/erlydtl/ebin/ -eval ' \
-		Compile = fun(F) -> \
-			Module = list_to_atom( \
-				string:to_lower(filename:basename(F, ".dtl")) ++ "_dtl"), \
-			erlydtl:compile(F, Module, [{out_dir, "ebin/"}]) \
-		end, \
-		_ = [Compile(F) || F <- string:tokens("$(1)", " ")], \
-		init:stop()'
-endef
-
-ifneq ($(wildcard src/),)
-ebin/$(PROJECT).app:: $(shell find templates -type f -name \*.dtl 2>/dev/null)
-	$(if $(strip $?),$(call compile_erlydtl,$?))
-endif
-
-# Copyright (c) 2013-2014, Loïc Hoguin <essen@ninenines.eu>
-# This file is part of erlang.mk and subject to the terms of the ISC License.
-
 .PHONY: distclean-edoc
 
 # Configuration.
@@ -388,47 +372,3 @@ distclean:: distclean-edoc
 
 distclean-edoc:
 	$(gen_verbose) rm -f doc/*.css doc/*.html doc/*.png doc/edoc-info
-
-# Copyright (c) 2013-2014, Loïc Hoguin <essen@ninenines.eu>
-# This file is part of erlang.mk and subject to the terms of the ISC License.
-
-.PHONY: distclean-rel
-
-# Configuration.
-
-RELX_CONFIG ?= $(CURDIR)/relx.config
-
-ifneq ($(wildcard $(RELX_CONFIG)),)
-
-RELX ?= $(CURDIR)/relx
-export RELX
-
-RELX_URL ?= https://github.com/erlware/relx/releases/download/v1.0.2/relx
-RELX_OPTS ?=
-RELX_OUTPUT_DIR ?= _rel
-
-ifeq ($(firstword $(RELX_OPTS)),-o)
-	RELX_OUTPUT_DIR = $(word 2,$(RELX_OPTS))
-endif
-
-# Core targets.
-
-rel:: distclean-rel $(RELX)
-	@$(RELX) -c $(RELX_CONFIG) $(RELX_OPTS)
-
-distclean:: distclean-rel
-
-# Plugin-specific targets.
-
-define relx_fetch
-	$(call core_http_get,$(RELX),$(RELX_URL))
-	chmod +x $(RELX)
-endef
-
-$(RELX):
-	@$(call relx_fetch)
-
-distclean-rel:
-	$(gen_verbose) rm -rf $(RELX_OUTPUT_DIR)
-
-endif
