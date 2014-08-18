@@ -115,6 +115,7 @@ define dep_fetch
 		git clone -n -- $$$$REPO $(DEPS_DIR)/$(1); \
 		cd $(DEPS_DIR)/$(1) && git checkout -q $$$$COMMIT; \
 	else \
+		echo "Unknown or invalid dependency: $(1). Please consult the erlang.mk README for instructions." >&2; \
 		exit 78; \
 	fi
 endef
@@ -200,9 +201,13 @@ xyrl_verbose = $(xyrl_verbose_$(V))
 
 # Core targets.
 
-app:: ebin/$(PROJECT).app
+app:: erlc-include ebin/$(PROJECT).app
 	$(eval MODULES := $(shell find ebin -type f -name \*.beam \
 		| sed "s/ebin\//'/;s/\.beam/',/" | sed '$$s/.$$//'))
+	@if [ -z "$$(grep -E '^[^%]*{modules,' src/$(PROJECT).app.src)" ]; then \
+		echo "Empty modules entry not found in $(PROJECT).app.src. Please consult the erlang.mk README for instructions." >&2; \
+		exit 1; \
+	fi
 	$(appsrc_verbose) cat src/$(PROJECT).app.src \
 		| sed "s/{modules,[[:space:]]*\[\]}/{modules, \[$(MODULES)\]}/" \
 		> ebin/$(PROJECT).app
@@ -234,6 +239,11 @@ endif
 clean:: clean-app
 
 # Extra targets.
+
+erlc-include:
+	-@if [ -d ebin/ ]; then \
+		find include/ src/ -type f -name \*.hrl -newer ebin -exec touch $(shell find src/ -type f -name "*.erl") \; 2>/dev/null || echo -n; \
+	fi
 
 clean-app:
 	$(gen_verbose) rm -rf ebin/
@@ -342,13 +352,19 @@ help::
 
 # Plugin-specific targets.
 
-plt: deps app
+$(DIALYZER_PLT): deps app
 	@dialyzer --build_plt --apps erts kernel stdlib $(PLT_APPS) $(ALL_DEPS_DIRS)
+
+plt: $(DIALYZER_PLT)
 
 distclean-plt:
 	$(gen_verbose) rm -f $(DIALYZER_PLT)
 
+ifneq ($(wildcard $(DIALYZER_PLT)),)
 dialyze:
+else
+dialyze: $(DIALYZER_PLT)
+endif
 	@dialyzer --no_native --src -r src $(DIALYZER_OPTS)
 
 # Copyright (c) 2013-2014, Loïc Hoguin <essen@ninenines.eu>
