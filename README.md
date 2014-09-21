@@ -69,8 +69,8 @@ Also see <https://github.com/jj1bdx/TinyMT/> for my fork of the reference code.
 
 ## Tested platforms
 
-* FreeBSD/amd64 10-STABLE with Erlang/OTP 17.1
-* OS X 10.9.3 with Erlang/OTP 17.1
+* FreeBSD/amd64 10-STABLE with Erlang/OTP 17.3
+* OS X 10.9.5 with Erlang/OTP 17.3
 * Travis CI Ubuntu 12.04 LTS with Erlang/OTP 17.0
 
 ## Make options (of erlang.mk)
