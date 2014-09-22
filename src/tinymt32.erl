@@ -100,8 +100,8 @@
 
 next_state(R) ->
     Y0 = R#intstate32.status3,
-    X0 = (R#intstate32.status0 band ?TINYMT32_MASK)
-    bxor R#intstate32.status1 bxor R#intstate32.status2,
+    X0 = R#intstate32.status0
+         bxor R#intstate32.status1 bxor R#intstate32.status2,
     X1 = (X0 bxor (X0 bsl ?TINYMT32_SH0)) band ?TINYMT32_UINT32,
     Y1 = Y0 bxor (Y0 bsr ?TINYMT32_SH0) bxor X1,
     S0 = R#intstate32.status1,
@@ -120,7 +120,7 @@ next_state(R) ->
 temper(R) ->
     T0 = R#intstate32.status3,
     T1 = (R#intstate32.status0 + (R#intstate32.status2 bsr ?TINYMT32_SH8))
-    band ?TINYMT32_UINT32,
+          band ?TINYMT32_UINT32,
     T2 = T0 bxor T1,
     T1M = (-(T1 band 1)) band ?TINYMT32_UINT32,
     T2 bxor (R#intstate32.tmat band T1M).
