@@ -1,7 +1,7 @@
 # tinymt-erlang: Tiny Mersenne Twister (TinyMT) for Erlang
 
-* Version: 0.2.0-pre
-* Release date: 17-JUN-2014
+* Version: 0.2.0
+* Release date: 12-NOV-2014
 * Edited and written by Kenji Rikitake
 * Email contact: <kenji.rikitake@acm.org>
 
@@ -70,7 +70,7 @@ Also see <https://github.com/jj1bdx/TinyMT/> for my fork of the reference code.
 ## Tested platforms
 
 * FreeBSD/amd64 10-STABLE with Erlang/OTP 17.3
-* OS X 10.9.5 with Erlang/OTP 17.3
+* OS X 10.10 with Erlang/OTP 17.3
 * Travis CI Ubuntu 12.04 LTS with Erlang/OTP 17.0
 
 ## Make options (of erlang.mk)
