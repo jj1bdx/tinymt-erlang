@@ -25,6 +25,18 @@ defmodule Tinymt.Mixfile do
 
   defp package do
     [files: [
+        ".gitignore",
+        ".travis.yml",
+        "CONTRIBUTING.md",
+        "LICENSE",
+        "Makefile*",
+        "README.md",
+        "erlang.mk",
+        "rng-parameters",
+        "src",
+        "test",
+        "test-scripts",
+        "tinymt-erlang.tsv",
         "package.exs"
         ],
      contributors: [
