@@ -82,6 +82,11 @@ Also see <https://github.com/jj1bdx/TinyMT/> for my fork of the reference code.
 * Execution speed benchmark: `make speed`
 * See also [erlang.mk](https://github.com/extend/erlang.mk) for the details
 
+## hex.pm support
+
+* Package name: `tinymt`
+* See `package.exs`
+
 ## TODO
 
 * More documentation and code
