@@ -1,12 +1,12 @@
 %% @author Kenji Rikitake <kenji.rikitake@acm.org>
 %% @author Mutsuo Saito
 %% @author Makoto Matsumoto
-%% @copyright 2012-2014 Kenji Rikitake, Mutsuo Saito, Makoto Matsumoto, Kyoto University, Hiroshima University, The University of Tokyo
+%% @copyright 2012-2016 Kenji Rikitake, Mutsuo Saito, Makoto Matsumoto, Kyoto University, Hiroshima University, The University of Tokyo
 %% @doc TinyMT 32-bit pseudo random generator module in pure Erlang
 %% @end
 %% (This is a simplified BSD license.)
 %%
-%% Copyright (c) 2012-2014 Kenji Rikitake and Kyoto University.
+%% Copyright (c) 2012-2016 Kenji Rikitake and Kyoto University.
 %% All rights reserved.
 %%
 %% Copyright (c) 2011 Mutsuo Saito, Makoto Matsumoto, Hiroshima
@@ -132,11 +132,11 @@ temper(#intstate32{
     T2 bxor (TM band T1M).
 
 %% @doc Generate 32bit-resolution float from the TinyMT internal state.
-%% (Note: 0.0 =&lt; result &lt; 1.0)
+%% (Note: 0.0 &lt; result &lt; 1.0)
 -spec temper_float(intstate32()) -> float().
 
 temper_float(R) ->
-    temper(R) * (1.0 / 4294967296.0).
+    (temper(R) + 0.5) * (1.0 / 4294967296.0).
 
 -spec period_certification(intstate32()) -> intstate32().
 
@@ -388,7 +388,7 @@ uniform_s(R0) ->
 
 %% @doc Generate 32bit-resolution float from the TinyMT internal state
 %% in the process dictionary.
-%% (Note: 0.0 =&lt; result &lt; 1.0)
+%% (Note: 0.0 &lt; result &lt; 1.0)
 %% (Compatible with random:uniform/1)
 
 uniform() ->
@@ -400,8 +400,8 @@ uniform() ->
     put(tinymt32_seed, R2),
     V.
 
-%% @doc Generate 32bit-resolution float from the given TinyMT internal state.
-%% (Note: 0 =&lt; result &lt; MAX (given positive integer))
+%% @doc Generate given range of integer from the given TinyMT internal state.
+%% (Note: 1 =&lt; result =&lt; MAX (given positive integer))
 -spec uniform_s(pos_integer(), intstate32()) -> {pos_integer(), intstate32()}.
 
 uniform_s(Max, R) when is_integer(Max), Max >= 1 ->
@@ -416,7 +416,7 @@ uniform_s(M, L, R) ->
     false -> uniform_s(M, L, R1)
     end.
 
-%% @doc Generate 32bit-resolution float from the given TinyMT internal state
+%% @doc Generate given range of integer from the given TinyMT internal state
 %% in the process dictionary.
 %% (Note: 1 =&lt; result =&lt; N (given positive integer))
 %% (compatible with random:uniform/1)

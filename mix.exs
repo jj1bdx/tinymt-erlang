@@ -3,7 +3,7 @@ defmodule Tinymt.Mixfile do
 
   def project do
     [app: :tinymt,
-     version: "0.2.0",
+     version: "0.3.0",
      description: description,
      package: package,
      deps: deps]
@@ -29,7 +29,8 @@ defmodule Tinymt.Mixfile do
         ".travis.yml",
         "CONTRIBUTING.md",
         "LICENSE",
-        "Makefile*",
+        "Makefile",
+        "Makefile.tinymt",
         "README.md",
         "erlang.mk",
         "rng-parameters",
@@ -37,12 +38,10 @@ defmodule Tinymt.Mixfile do
         "test",
         "test-scripts",
         "tinymt-erlang.tsv",
-        "package.exs"
+        "mix.exs"
         ],
-     contributors: [
-        "Kenji Rikitake",
-        "Mutsuo Saito",
-        "Makoto Matsumoto"
+     maintainers: [
+        "Kenji Rikitake"
         ],
      licenses: ["simplified BSD"],
      links: %{"GitHub" => "https://github.com/jj1bdx/tinymt-erlang/"}
