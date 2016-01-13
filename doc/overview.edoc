@@ -1,0 +1,9 @@
+@author Kenji Rikitake <kenji.rikitake@acm.org>
+@title tinymt-erlang: Tiny Mersenne Twister (TinyMT) for Erlang
+@copyright 2011-2016 Kenji Rikitake, Kyoto University, Mutsuo Saito, Makoto Matsumoto and Hiroshima University.
+@version 0.3.1
+@doc 
+
+@reference See <a href="https://github.com/jj1bdx/tinymt-erlang/">tinymt-erlang GitHub repository</a> for the further details.
+
+@end

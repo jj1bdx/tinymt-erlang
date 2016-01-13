@@ -375,7 +375,7 @@ setgenparams(MAT1, MAT2, TMAT) ->
                tmat = TMAT band ?TINYMT32_UINT32}).
 
 %% @doc Generate 32bit-resolution float from the given TinyMT internal state.
-%% (Note: 0.0 =&lt; result &lt; 1.0)
+%% (Note: 0.0 &lt; result &lt; 1.0)
 %% (Compatible with random:uniform_s/1)
 
 -spec uniform_s(intstate32()) -> {float(), intstate32()}.
@@ -389,7 +389,7 @@ uniform_s(R0) ->
 %% @doc Generate 32bit-resolution float from the TinyMT internal state
 %% in the process dictionary.
 %% (Note: 0.0 &lt; result &lt; 1.0)
-%% (Compatible with random:uniform/1)
+%% (Compatible with random:uniform/0)
 
 uniform() ->
     R = case get(tinymt32_seed) of
@@ -400,8 +400,11 @@ uniform() ->
     put(tinymt32_seed, R2),
     V.
 
-%% @doc Generate given range of integer from the given TinyMT internal state.
+%% @doc Generate given range of integers from the given TinyMT internal state.
 %% (Note: 1 =&lt; result =&lt; MAX (given positive integer))
+%% (Compatible with random:uniform_s/2, though the algorithm is different;
+%%  retry if the temper/1 does not give a result which guarantee the 
+%%  equally-probabilistic results between the given range of integers)
 -spec uniform_s(pos_integer(), intstate32()) -> {pos_integer(), intstate32()}.
 
 uniform_s(Max, R) when is_integer(Max), Max >= 1 ->
@@ -416,10 +419,11 @@ uniform_s(M, L, R) ->
     false -> uniform_s(M, L, R1)
     end.
 
-%% @doc Generate given range of integer from the given TinyMT internal state
+%% @doc Generate given range of integers from the given TinyMT internal state
 %% in the process dictionary.
 %% (Note: 1 =&lt; result =&lt; N (given positive integer))
-%% (compatible with random:uniform/1)
+%% (Compatible with random:uniform/1, though the algorithm is different;
+%%  see uniform_s/2 for the details)
 
 -spec uniform(pos_integer()) -> pos_integer().
 
