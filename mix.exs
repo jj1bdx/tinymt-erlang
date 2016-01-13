@@ -1,16 +1,27 @@
+defmodule Mix.Tasks.Edoc do
+    @shortdoc "Make docs using edoc on erlang.mk"
+
+    def run(_) do
+    {result, _error_code} = System.cmd("make", ["docs"], stderr_to_stdout: true)
+    Mix.shell.info result
+    :ok
+    end
+end
+
 defmodule Tinymt.Mixfile do
   use Mix.Project
 
   def project do
     [app: :tinymt,
-     version: "0.3.0",
+     version: "0.3.1",
      description: description,
      package: package,
+     aliases: [docs: ["edoc"]],
      deps: deps]
   end
 
   def application do
-    [applications: [:logger]]
+    [applications: [:kernel, :stdlib, :logger]]
   end
 
   defp deps do
@@ -27,6 +38,7 @@ defmodule Tinymt.Mixfile do
     [files: [
         ".gitignore",
         ".travis.yml",
+        "doc/overview.edoc",
         "CONTRIBUTING.md",
         "LICENSE",
         "Makefile",
@@ -37,14 +49,14 @@ defmodule Tinymt.Mixfile do
         "src",
         "test",
         "test-scripts",
-        "tinymt-erlang.tsv",
         "mix.exs"
         ],
      maintainers: [
         "Kenji Rikitake"
         ],
      licenses: ["simplified BSD"],
-     links: %{"GitHub" => "https://github.com/jj1bdx/tinymt-erlang/"}
+     links: %{"GitHub" => "https://github.com/jj1bdx/tinymt-erlang/",
+     "Docs" => "http://hexdocs.pm/tinymt"}
      ]
   end
 end
