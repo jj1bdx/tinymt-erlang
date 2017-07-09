@@ -1,6 +1,6 @@
 %% (This is a simplified BSD license.)
 %%
-%% Copyright (c) 2012-2014 Kenji Rikitake and Kyoto University.
+%% Copyright (c) 2012-2017 Kenji Rikitake and Kyoto University.
 %% All rights reserved.
 %%
 %% Copyright (c) 2011 Mutsuo Saito, Makoto Matsumoto, Hiroshima
@@ -37,9 +37,6 @@
 
 -export([test_speed/0]).
 
-%% From random module
--type ran() :: {integer(), integer(), integer()}.
-
 -spec test_speed_tinymt_uniform_rec1([float()], non_neg_integer(), non_neg_integer(),
     pos_integer(), tinymt32:intstate32()) -> 'ok'.
 
@@ -62,7 +59,7 @@ test_speed_tinymt_uniform(P, Q) ->
     {_, T} = statistics(runtime),
     T.
 
--spec test_speed_orig_uniform_n_rec1([integer()], non_neg_integer(), non_neg_integer(), pos_integer(), ran()) -> 'ok'.
+-spec test_speed_orig_uniform_n_rec1([integer()], non_neg_integer(), non_neg_integer(), pos_integer(), rand:state()) -> 'ok'.
 
 test_speed_orig_uniform_n_rec1(Acc, 0, _, _, _) ->
     _ = lists:reverse(Acc),
@@ -71,14 +68,15 @@ test_speed_orig_uniform_n_rec1(Acc, X, 0, R, I) ->
     _ = lists:reverse(Acc),
     test_speed_orig_uniform_n_rec1([], X - 1, R, R, I);
 test_speed_orig_uniform_n_rec1(Acc, X, Q, R, I) ->
-    {F, I2} = random:uniform_s(10000, I),
+    {F, I2} = rand:uniform_s(10000, I),
     test_speed_orig_uniform_n_rec1([F|Acc], X, Q - 1, R, I2).
 
 -spec test_speed_orig_uniform_n(non_neg_integer(), non_neg_integer()) -> non_neg_integer().
 
 test_speed_orig_uniform_n(P, Q) ->
     _ = statistics(runtime),
-    I = random:seed(),
+    % exsplus algorithm is available on OTP 18 and later
+    I = rand:seed(exsplus),
     ok = test_speed_orig_uniform_n_rec1([], P, Q, Q, I),
     {_, T} = statistics(runtime),
     T.
@@ -104,7 +102,7 @@ test_speed_tinymt_uniform_n(P, Q) ->
     {_, T} = statistics(runtime),
     T.
 
--spec test_speed_orig_uniform_rec1([float()], non_neg_integer(), non_neg_integer(), pos_integer(), ran()) -> 'ok'.
+-spec test_speed_orig_uniform_rec1([float()], non_neg_integer(), non_neg_integer(), pos_integer(), rand:state()) -> 'ok'.
 
 test_speed_orig_uniform_rec1(Acc, 0, _, _, _) ->
     _ = lists:reverse(Acc),
@@ -113,14 +111,15 @@ test_speed_orig_uniform_rec1(Acc, X, 0, R, I) ->
     _ = lists:reverse(Acc),
     test_speed_orig_uniform_rec1([], X - 1, R, R, I);
 test_speed_orig_uniform_rec1(Acc, X, Q, R, I) ->
-    {F, I2} = random:uniform_s(I),
+    {F, I2} = rand:uniform_s(I),
     test_speed_orig_uniform_rec1([F|Acc], X, Q - 1, R, I2).
 
 -spec test_speed_orig_uniform(non_neg_integer(), non_neg_integer()) -> non_neg_integer().
 
 test_speed_orig_uniform(P, Q) ->
     _ = statistics(runtime),
-    I = random:seed(),
+    % exsplus algorithm is available on OTP 18 and later
+    I = rand:seed(exsplus),
     ok = test_speed_orig_uniform_rec1([], P, Q, Q, I),
     {_, T} = statistics(runtime),
     T.
@@ -128,7 +127,7 @@ test_speed_orig_uniform(P, Q) ->
 -spec test_speed() -> 'ok'.
 
 test_speed() ->
-    io:format("{orig_uniform, orig_uniform_n, tinymt_uniform, tinymt_uniform_n}~n~p~n",
+    io:format("{rand_uniform, rand_uniform_n, tinymt_uniform, tinymt_uniform_n}~n~p~n",
               [{test_speed_orig_uniform(100, 10000),
                 test_speed_orig_uniform_n(100, 10000),
                 test_speed_tinymt_uniform(100, 10000),

@@ -1,7 +1,8 @@
+<!-- -*- coding: utf-8 -*- -->
 # tinymt-erlang: Tiny Mersenne Twister (TinyMT) for Erlang
 
-* Version: 0.3.1
-* Release date: 13-JAN-2016
+* Version: 0.3.2
+* Release date: 9-JUL-2017
 * Edited and written by Kenji Rikitake
 * Email contact: <kenji.rikitake@acm.org>
 
@@ -11,7 +12,7 @@
 
 ## License
 
-Copyright (c) 2012-2016 Kenji Rikitake and Kyoto University.
+Copyright (c) 2012-2017 Kenji Rikitake and Kyoto University.
 All rights reserved.
 
 Copyright (c) 2011-2012 Mutsuo Saito, Makoto Matsumoto, Hiroshima
@@ -30,6 +31,7 @@ Also see <https://github.com/jj1bdx/TinyMT/> for my fork of the reference code.
 
 ## Changes from the old version
 
+* `make speed` now compares with `rand` module `exsplus` algorithm (from 0.3.2)
 * Output `X` interval for `uniform/0` and `uniform_s/1` is now `0.0 < X < 1.0`, consistent with random and rand modules (from 0.3.0)
 * Old NIF-supported version tagged as `20140409`
 * Old include file can be found in version tagged as `20140409`
@@ -71,7 +73,7 @@ Also see <https://github.com/jj1bdx/TinyMT/> for my fork of the reference code.
 
 ## Tested platforms
 
-* OS X 10.11.2 with Erlang/OTP 18.2.1
+* OS X 10.12.5 with Erlang/OTP 20.0.1
 
 ## Make options (of erlang.mk)
 
