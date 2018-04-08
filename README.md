@@ -1,6 +1,12 @@
 <!-- -*- coding: utf-8 -*- -->
 # tinymt-erlang: Tiny Mersenne Twister (TinyMT) for Erlang
 
+## This software is no longer maintained
+
+*CAUTION*: this software is no longer maintained. *Migrate to the default rand module for OTP 18 and later, because they are maintained and using faster and better algorithms.*
+
+## Version and credit information
+
 * Version: 0.3.2
 * Release date: 9-JUL-2017
 * Edited and written by Kenji Rikitake
